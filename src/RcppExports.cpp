@@ -5,30 +5,6 @@
 
 using namespace Rcpp;
 
-// hashfun_1
-Rcpp::IntegerVector hashfun_1(IntegerVector vec, int cores);
-RcppExport SEXP LSHR_hashfun_1(SEXP vecSEXP, SEXP coresSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject __result;
-    Rcpp::RNGScope __rngScope;
-    Rcpp::traits::input_parameter< IntegerVector >::type vec(vecSEXP);
-    Rcpp::traits::input_parameter< int >::type cores(coresSEXP);
-    __result = Rcpp::wrap(hashfun_1(vec, cores));
-    return __result;
-END_RCPP
-}
-// hashfun_2
-Rcpp::IntegerVector hashfun_2(IntegerVector vec, int cores);
-RcppExport SEXP LSHR_hashfun_2(SEXP vecSEXP, SEXP coresSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject __result;
-    Rcpp::RNGScope __rngScope;
-    Rcpp::traits::input_parameter< IntegerVector >::type vec(vecSEXP);
-    Rcpp::traits::input_parameter< int >::type cores(coresSEXP);
-    __result = Rcpp::wrap(hashfun_2(vec, cores));
-    return __result;
-END_RCPP
-}
 // get_hash_matrix
 IntegerMatrix get_hash_matrix(int unique_shingles_length, int hashfun_number, int cores);
 RcppExport SEXP LSHR_get_hash_matrix(SEXP unique_shingles_lengthSEXP, SEXP hashfun_numberSEXP, SEXP coresSEXP) {
