@@ -3,4 +3,5 @@
 export(get_candidate_pairs)
 export(get_signature_matrix)
 import(data.table)
+import(magrittr)
 useDynLib(LSHR)

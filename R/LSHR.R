@@ -4,4 +4,5 @@
 #' @name LSHR
 #' @useDynLib LSHR
 #' @import data.table
+#' @import magrittr
 NULL
