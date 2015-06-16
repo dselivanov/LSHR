@@ -29,8 +29,8 @@ get_candidate_pairs <- function(signature_matrix, bands_number, similarity, verb
     rows_per_band <- sm_nrow / bands_number
     prob_become_candidate <- 1 - (1 - similarity ^ rows_per_band) ^ bands_number
     print(paste('Looking for sets with similarity',
-                round(similarity, 2),
-                'with probablity of becoming candidate pair =',
+                round(similarity, 2)))
+    print(paste('Probablity of becoming candidate pair =',
                 prob_become_candidate))
   }
 
