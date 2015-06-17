@@ -1,10 +1,12 @@
-minhashing <- function(hash_matrix, TDM, hashfun_number) {
-  p <- length(TDM)
+
+# vectorized version of minhash algorithm with many hash functions
+minhashing <- function(hash_matrix, tdm, hashfun_number) {
+  p <- length(tdm)
   m_sig <- matrix(data = rep(Inf, hashfun_number * p), nrow = hashfun_number, ncol = p)
-  for (c in 1:length(TDM)) {
-    mat_non_zero_rows <- TDM[[c]]
+  for (clmn in seq_along(tdm)) {
+    mat_non_zero_rows <- tdm[[clmn]]
     mat <- hash_matrix[mat_non_zero_rows, , drop = FALSE]
-    m_sig[, c] <- pmin.int(m_sig[, c],  matrixStats::colMins(mat))
+    m_sig[, clmn] <- pmin.int(m_sig[, clmn],  matrixStats::colMins(mat))
   }
   m_sig
 }
