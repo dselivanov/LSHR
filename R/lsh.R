@@ -25,8 +25,8 @@ get_candidate_pairs <- function(signature_matrix, bands_number, similarity, verb
   sm_nrow <- nrow(signature_matrix)
   if( sm_nrow %% bands_number != 0)
     stop("number of bands should be divisor of number of rows of signature matrix: 0 == nrow(signature_matrix) %% bands_number")
+  rows_per_band <- sm_nrow / bands_number
   if(verbose) {
-    rows_per_band <- sm_nrow / bands_number
     prob_become_candidate <- 1 - (1 - similarity ^ rows_per_band) ^ bands_number
     print(paste('Looking for sets with similarity',
                 round(similarity, 2)))
@@ -36,22 +36,32 @@ get_candidate_pairs <- function(signature_matrix, bands_number, similarity, verb
 
   # calculate bands borders for splitting signarure matrix
   splits <- split_vector(x = 1:sm_nrow, splits = bands_number)
-
-  buckets <- Map(hash_bucket, splits,
+  bands_hashes <- Map(hash_band, splits,
                  MoreArgs = list(signature_matrix = signature_matrix ))
 
-  candidate_pairs <- lapply(buckets, detect_buckets)
-  dt = rbindlist(candidate_pairs)
-  dt[, .N, keyby = c('index1', 'index2')][N > 1]
+  candidate_pairs <- detect_candidate_pairs(bands_hashes)
+  candidate_pairs
 }
 
-detect_buckets <- function(bucket) {
-  dt = data.table(index = seq_along(bucket), value = bucket, key=c('value'))
-  dt = dt[dt[ , .N, keyby = value][N > 1]]
-  dt[dt, list(index1 = index, index2 = i.index), allow.cartesian = TRUE][index1 < index2]
+detect_candidate_pairs <- function(band_hashes) {
+  bands_number <- length(band_hashes)
+  # all bands_hashes have equal row lengths
+  rows_per_band <- length(band_hashes[[1]])
+  # construct table for
+  dt <- data.table(index = rep(1:rows_per_band, bands_number),
+                   hash_value = unlist(band_hashes),
+                   band_index = rep(1:bands_number, each = rows_per_band),
+                   key = c('band_index', 'hash_value'))
+
+  # look for candidates that have same hash value in a given band.
+  dt = dt[ , list(index, .N), keyby = list(band_index, hash_value) ][N > 1, .(band_index, hash_value, index)]
+  # cross join to find candidate pair indices
+  dt = dt[dt, list(index1 = index, index2 = i.index), allow.cartesian = TRUE][index1 < index2]
+  # combine duplicated candidate pairs and get number of bands where band hashes are identical
+  dt[, .N, keyby = c('index1', 'index2')]#[N > 1]
 }
 
-hash_bucket <- function(row_index_bounds, signature_matrix) {
+hash_band <- function(row_index_bounds, signature_matrix) {
   row_indices <- row_index_bounds[[1]]:row_index_bounds[[2]]
   # Using simple sum() as hash of signature chunk in each band.
   # We can (and should) construct better hash function for hashing integer sequences
