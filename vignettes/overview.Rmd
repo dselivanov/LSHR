@@ -175,7 +175,7 @@ In chunk above we did it not very efficiently with 2 nested ```for``` loops. But
 You can see how we obtain **signature-matrix** matrix after "minhash transformation". Permutations and corresponding signatures marked with same colors:
 
 |perm_1|perm_2|perm_3|perm_4|set_1| set_2| set_3|
- |---|---|---|---|---|---|---|
+|---|---|---|---|---|---|---|
  <span style="background-color:lightgreen">4 </span>| <span style="background-color:orange">1 </span>| <span style="background-color:lightblue">4 </span>| <span style="background-color:yellow">6 </span>| 1 | 1 | 0 |
  <span style="background-color:lightgreen">3 </span>| <span style="background-color:orange">4 </span>| <span style="background-color:lightblue">1 </span>| <span style="background-color:yellow">1 </span>| 1 | 1 | 0 |
  <span style="background-color:lightgreen">7 </span>| <span style="background-color:orange">6 </span>| <span style="background-color:lightblue">6 </span>| <span style="background-color:yellow">2 </span>| 1 | 0 | 0 |
