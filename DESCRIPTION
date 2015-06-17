@@ -17,7 +17,7 @@ Imports:
     fastmatch (>= 1.0-4),
     magrittr (>= 1.5),
     parallel,
-    Rcpp (>= 0.11.5)
+    Rcpp (>= 0.10.3)
 LinkingTo:
     Rcpp
 Suggests:
