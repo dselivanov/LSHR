@@ -9,7 +9,7 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 ---
 # Locality Sensitive Hashing in R
-LSHR - fast and memory efficient package for reducing the dimensionality of high-dimensional data. Only minhashing implemented at the moment.
+LSHR - fast and memory efficient package for near-neighbor search in high-dimensional data. Only minhashing implemented at the moment.
 Most of ideas are based on brilliant [Mining of Massive Datasets](http://www.mmds.org) book - many thanks to authors. 
 
 # Contents
@@ -108,7 +108,10 @@ set_list <- list(set1, set2, set3)
 Now we have 3 sets to compare and identify profiles, related to same "John Smith". From these sets we will construct matrix which encode relations between sets:
 ```{r toy-example-matrix-conctruction-1}
 sets_dict <- unlist(set_list) %>% unique
-m <- sapply(set_list, FUN = function(set, dict) as.integer(dict %in% set), dict = sets_dict, simplify = T)
+m <- sapply(set_list, 
+            function(set, dict) as.integer(dict %in% set), 
+            dict = sets_dict, 
+            simplify = T)
 dimnames(m) <- list(sets_dict, paste('set', 1:length(set_list), sep = '_'))
 ```
 ```{r, echo=FALSE, results='asis'}
@@ -120,7 +123,7 @@ Let's call it matrix **input-matrix** $M$.
 In our representation similarity of two sets from source array equal to the similarity of two corresponding columns with non-zero rows:  
 
 name | set_1 | set_2 | intersecton | union|
---|--|---|---|----|
+---|---|---|---|---|
 SMITH|1|1|+|+|
 JOHNSON|1|1|+|+|
 WILLIAMS|1|0|-|+|
@@ -172,7 +175,7 @@ In chunk above we did it not very efficiently with 2 nested ```for``` loops. But
 You can see how we obtain **signature-matrix** matrix after "minhash transformation". Permutations and corresponding signatures marked with same colors:
 
 |perm_1|perm_2|perm_3|perm_4|set_1| set_2| set_3|
- |--|--|--|--|--|--|--|
+ |---|---|---|---|---|---|---|
  <span style="background-color:lightgreen">4 </span>| <span style="background-color:orange">1 </span>| <span style="background-color:lightblue">4 </span>| <span style="background-color:yellow">6 </span>| 1 | 1 | 0 |
  <span style="background-color:lightgreen">3 </span>| <span style="background-color:orange">4 </span>| <span style="background-color:lightblue">1 </span>| <span style="background-color:yellow">1 </span>| 1 | 1 | 0 |
  <span style="background-color:lightgreen">7 </span>| <span style="background-color:orange">6 </span>| <span style="background-color:lightblue">6 </span>| <span style="background-color:yellow">2 </span>| 1 | 0 | 0 |
@@ -183,7 +186,7 @@ You can see how we obtain **signature-matrix** matrix after "minhash transformat
 
 
 |set_1| set_2| set_3|
-|--|--|--|
+|---|---|---|
 |<span style="background-color:lightgreen">3</span>|<span style="background-color:lightgreen">3</span>|<span style="background-color:lightgreen">1</span>|
 |<span style="background-color:orange">1</span>|<span style="background-color:orange">1</span>|<span style="background-color:orange">3</span>|
 |<span style="background-color:lightblue">1</span>|<span style="background-color:lightblue">1</span>|<span style="background-color:lightblue">2</span>|
@@ -199,16 +202,90 @@ jaccard_signatures <-  function(c1, c2) {
 print(jaccard_signatures(sm[, 1], sm[, 2]))
 print(jaccard_signatures(sm[, 1], sm[, 3]))
 ```
-### Intuition
+### Intuition and theoretical guaranties
+
 Intuition is very straighforward. Let's look down the permuted columns $c_1$ and $c_2$ until we detect **1**.  
+
   * If in both columns we find ones - (1, 1), then $h(c_1) = h(c_2)$. 
-  * In case (0, 1) or (1, 0) $h(c_1) \neq h(c_2)$. So the probability over all permutations of non-zero rows that $h(c_1) = h(c_2)$ is the same as $J(c_1, c_2)$.  
+  * In case (0, 1) or (1, 0) $h(c_1) \neq h(c_2)$. 
   
-### Theoretical guaranties
-Moreover there exist theoretical guaranties for estimation of Jaccard similarity: for any constant $\varepsilon > 0$ there is a constant $k = O(1/\varepsilon^2)$ - number of permutations - such that the expected error of the estimate is at most $\varepsilon$. 
+So the probability over all permutations of non-zero rows that $h(c_1) = h(c_2)$ is the same as $J(c_1, c_2)$.  
+Or we can repharase this as following:
+
+> As from Probability that the minhash function for a random permutation of rows produces the same value for two sets equals the Jaccard similarity of those sets.
+
+Moreover there exist **theoretical guaranties** for estimation of Jaccard similarity: for any constant $\varepsilon > 0$ there is a constant $k = O(1/\varepsilon^2)$ - number of permutations - such that the expected error of the estimate is at most $\varepsilon$. 
+
+## Specific form of Locality Sensitive Hashing for minhashing
+After minhashing we obtain quite compact dense signature matrix. Jaccard distance between columns corresponds to distance between input sets. We have control on accuracy - more permutations we will make - more accurate estimation we will recieve. That's cool, but we **still have $O(n^2)$ complexity** - we have to compare all possible pairs to find similat sets.  
+That's where LSH come in.
+Very good explanation from [MMDS book](mmds.org):
+
+> One general approach to LSH is to *hash* items several times, in such a way that **similar items are more likely to be hashed to the same bucket than dissimilar items are**. We then consider any pair that hashed to the same bucket for any of the hashings to be a **candidate pair**. We check only the candidate pairs for similarity. The hope is that most of the dissimilar pairs will never hash to the same bucket, and therefore will never be checked. Those dissimilar pairs that do hash to the same bucket are **false positives**; we hope these will be only a small fraction of all pairs. We also hope that most of the truly similar pairs will hash to the same bucket under at least one of the hash functions. Those that do not are **false negatives**; we hope these will be only a small fraction of the truly similar pairs.
+If we have minhash signatures for the items, an effective way to choose the hashings is to divide the signature matrix into `b` **bands** consisting of `r` **rows** each. For each band, there is a hash function that takes vectors of `r` integers (the portion of one column within that band) and *hashes them to some large number of buckets*. We can use the same hash function for all the bands, but we use a separate bucket array for each band, so columns with the same vector in different bands will not hash to the same bucket.
+
+Lets look at out signtatures matrix from [example above](#minhashing-algorithm):
+
+|set_1| set_2| set_3|
+|---|---|---|
+3	| 3	| 1
+1	| 1	| 3
+1	| 1	| 2
+1	| 1	| 4
+
+Now we will make interesting trick - split rows of our matrix into **"bands"**. For example we will split it into 2 bands:  
+  
+$Band_1$ consists of two first rows:
+
+|set_1| set_2| set_3|
+|---|---|---|
+3	| 3	| 1
+1	| 1	| 3
+
+and $Band_2$ consists of next two rows:
+
+|set_1| set_2| set_3|
+|---|---|---|
+1	| 1	| 2 |
+1	| 1	| 4 |
+
+After that we will **hash each column $c$ of each band**. For example, suppose 
+$$hash(c) = concatenation(c)$$ 
+
+So hashes for bands will look like:
+
+$HashBand_1$:
+
+|set_1| set_2| set_3|
+|---|---|---|
+31	| 31	| 13 |
+
+$HashBand_2$:
+
+|set_1| set_2| set_3|
+|---|---|---|
+11	| 11	| 24 |
+
+We see, that $set_1$ and $set_2$ have same hash values - they were **hashed into same buckets**, so became **candidate pairs**.  
+**Intuition** is following: 
+
+> The more similar two columns are, the more likely it is that they will be identical in some band. Thus, intuitively the banding strategy makes similar columns much more likely to be candidate pairs than dissimilar pairs.
+
+### Formal prove and theoretical guaranties
+Suppose we use $b$ bands of $r$ rows each, and suppose that a particular pair of documents have Jaccard similarity $s$. Recall that the probability the minhash signatures for these documents agree in any one particular
+row of the signature matrix is $s$. We can calculate the probability that these documents (or rather their signatures) become a candidate pair as follows:
+
+1. The probability that the signatures agree in all rows of one particular
+band is $s^r$.
+2. The probability that the signatures do not agree in at least one row of a
+particular band is $(1 − s)^r$ .
+3. The probability that the signatures do not agree in all rows of any of the
+bands is $(1 − s^r)^b$ .
+4. The probability that the signatures agree in all the rows of at least one
+band, and therefore become a candidate pair, is $1 − (1 − s^r)^b$.
 
 # Implementation
-Aim of this package is to be fast and memory efficient. We use [Rcpp](https://github.com/RcppCore/Rcpp), [fastmatch](https://github.com/s-u/fastmatch) and [data.table](github.com/Rdatatable/data.table/) packages.
+**LSHR** package designed to be **fast and memory efficient**. We use [Rcpp](https://github.com/RcppCore/Rcpp) (fast integer hash functions + concurrency with openMP), [fastmatch](https://github.com/s-u/fastmatch) and [data.table](github.com/Rdatatable/data.table/) packages.
 
 There few challenges in developing efficient implementation of minhashing:
 
@@ -217,6 +294,7 @@ There few challenges in developing efficient implementation of minhashing:
 2. Signature matrix construction
   * permutations are expensive! using many hash functions.
   * construction of hash function family
+  * vectorized implementation
 3. Locality Sensitive Hashing
   * number of buckets
   * theoretical guaranties
@@ -225,14 +303,14 @@ There few challenges in developing efficient implementation of minhashing:
 **TODO**
 
 ## Signature matrix construction
-
+### Using many hash functions instead of permutations
 Suppose **input-matrix** is very big, say ```1e9``` rows. It is quite hard computationally to permute 1 billion rows. Also you need to store these entries and access these values. It is common to use following scheme instead: 
 
   * Pick $N$ independent hash functions $h_i(c)$ instead of $N$ premutations, $i = 1..N$.  
   * For each column $c$ and each hash function $h_i$, keep a "slot" $M(i, c)$.  
   * $M(i, c)$ will become the smallest value of $h_i(r)$ for which column $c$ has 1 in row $r$. I.e., $h_i(r)$ gives order of rows for $i^{th}$ permutation.  
 
-So we end up with following **ALGORITHM(1)** from excellent [Mining of Massive Datasets](http://www.mmds.org) book:
+So we end up with following from excellent [Mining of Massive Datasets](http://www.mmds.org) book:
 ```
 for each row r do begin
   for each hash function hi do
@@ -244,5 +322,8 @@ for each row r do begin
           M(i, c) := hi(r);
 end;
 ```
-## Locality Sensitive Hashing
-**TODO**
+Nested loops are slow in R. We will implement this algoritm in fast [vectorized way](#vectorized-implementation-of-minhashing-algorithm).
+
+### construction of hash function family
+
+### vectorized implementation of minhashing algorithm
