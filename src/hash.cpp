@@ -1,10 +1,4 @@
-#include <Rcpp.h>
-#include <omp.h>
-using namespace Rcpp;
-using namespace std;
-
-// Enable OpenMP
-// [[Rcpp::plugins(openmp)]]
+#include "lshr.h"
 
 // http://stackoverflow.com/a/12996028/1069256
 uint32_t atom_hashfun_1(uint32_t a) {
@@ -22,30 +16,40 @@ uint32_t atom_hashfun_2( uint32_t a) {
   a = a ^ (a >> 15);
   return a;
 }
+
+// [[Rcpp::export]]
 Rcpp::IntegerVector hashfun_1(IntegerVector vec, int cores = 2) {
-  omp_set_num_threads(cores);
   int K = vec.size();
   Rcpp::IntegerVector res(K);
-  #pragma omp parallel for schedule(static)
+  #ifdef SUPPORT_OPENMP
+    omp_set_num_threads(cores);
+    #pragma omp parallel for schedule(static)
+  #endif
   for (int i = 0; i < K; i++)
     res[i] = atom_hashfun_1(vec[i]);
   return res;
 }
 
 Rcpp::IntegerVector hashfun_2(IntegerVector vec, int cores = 2) {
-  omp_set_num_threads(cores);
   int K = vec.size();
   Rcpp::IntegerVector res(K);
-  #pragma omp parallel for schedule(static)
+  #ifdef SUPPORT_OPENMP
+    omp_set_num_threads(cores);
+    #pragma omp parallel for schedule(static)
+  #endif
   for (int i = 0; i < K; i++)
     res[i] = atom_hashfun_2(vec[i]);
   return res;
 }
+
+//' @export
 // [[Rcpp::export]]
 IntegerMatrix get_hash_matrix(int unique_shingles_length, int hashfun_number = 60, int cores = 2) {
-  omp_set_num_threads(cores);
   IntegerMatrix res(unique_shingles_length, hashfun_number);
-  #pragma omp parallel for schedule(static)
+  #ifdef SUPPORT_OPENMP
+    omp_set_num_threads(cores);
+    #pragma omp parallel for schedule(static)
+  #endif
   for (int i = 0; i < unique_shingles_length; i++) {
     uint32_t h1 = atom_hashfun_1(i + 1);
     uint32_t h2 = atom_hashfun_2(i + 1);
