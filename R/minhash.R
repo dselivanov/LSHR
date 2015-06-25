@@ -1,6 +1,7 @@
 
 # vectorized version of minhash algorithm with many hash functions
-minhashing <- function(hash_matrix, tdm, hashfun_number) {
+minhashing <- function(hash_matrix, tdm) {
+  hashfun_number <- ncol(hash_matrix)
   p <- length(tdm)
   m_sig <- matrix(data = rep(Inf, hashfun_number * p), nrow = hashfun_number, ncol = p)
   for (clmn in seq_along(tdm)) {
@@ -38,5 +39,5 @@ get_signature_matrix <- function (sets, hashfun_number, cores = parallel::detect
   hash_matrix <- get_hash_matrix(unique_shingles_length = unique_shingles_length,
                                  hashfun_number = hashfun_number,
                                  cores = cores)
-  minhashing(hash_matrix, TDM, hashfun_number)
+  minhashing(hash_matrix, TDM)
 }
