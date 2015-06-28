@@ -44,23 +44,28 @@ Rcpp::IntegerVector hashfun_2(IntegerVector vec, int cores = 2) {
 
 //' @export
 // [[Rcpp::export]]
-IntegerMatrix get_hash_matrix(int unique_shingles_length, int hashfun_number = 60, int cores = 2) {
-  IntegerMatrix res(unique_shingles_length, hashfun_number);
+IntegerVector get_hash_matrix(int unique_shingles_length, int hashfun_number, int cores) {
+  // IntegerMatrix res_matrix(unique_shingles_length, hashfun_number);
+  // 2 times faster then using IntegerMatrix
+  vector<int> res_matrix(unique_shingles_length * hashfun_number);
+  uint32_t h1;
+  uint32_t h2;
   #ifdef SUPPORT_OPENMP
     omp_set_num_threads(cores);
     #pragma omp parallel for schedule(static)
   #endif
   for (int i = 0; i < unique_shingles_length; i++) {
-    uint32_t h1 = atom_hashfun_1(i + 1);
-    uint32_t h2 = atom_hashfun_2(i + 1);
-    int val;
+    h1 = atom_hashfun_1(i + 1);
+    h2 = atom_hashfun_2(i + 1);
     // we can generate as many independent hash functions as we want
     // http://stackoverflow.com/questions/24676237/generating-random-hash-functions-for-lsh-minhash-algorithm
     // http://www.eecs.harvard.edu/~kirsch/pubs/bbbf/rsa.pdf
     for (int j = 0; j < hashfun_number; j++) {
-      val = h1 + (j + 1) * h2 + j * j;
-      res(i, j) = val;
+      //res_matrix(i, j) = h1 + (j + 1) * h2 + j * j;
+      res_matrix[i * hashfun_number + j] = h1 + (j + 1) * h2 + j * j;
     }
   }
-  return res;
+  IntegerVector m = wrap(res_matrix);
+  m.attr("dim") = Dimension(unique_shingles_length, hashfun_number);
+  return m;
 }
