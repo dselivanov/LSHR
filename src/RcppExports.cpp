@@ -18,7 +18,7 @@ BEGIN_RCPP
 END_RCPP
 }
 // get_hash_matrix
-IntegerMatrix get_hash_matrix(int unique_shingles_length, int hashfun_number, int cores);
+IntegerVector get_hash_matrix(int unique_shingles_length, int hashfun_number, int cores);
 RcppExport SEXP LSHR_get_hash_matrix(SEXP unique_shingles_lengthSEXP, SEXP hashfun_numberSEXP, SEXP coresSEXP) {
 BEGIN_RCPP
     Rcpp::RObject __result;

@@ -26,18 +26,21 @@ minhashing <- function(hash_matrix, tdm) {
 #' sets <- lapply(1:10, function(x) sample(letters, sample(5:15)))
 #' sm <- get_signature_matrix(sets, 10, cores = 4)
 get_signature_matrix <- function (sets, hashfun_number, cores = parallel::detectCores()) {
-  shingles <- sets %>% unlist %>% unique
-  unique_shingles_length <- length(shingles)
   # make sparse term-document matrix : rows = elements of set, cols = set's ids
   # values = [TRUE,FALSE] - whether given set contains given element of set
-  # we store matrix as list of arrays. So we keep only TRUE values:
-  # each element of list is an arrays which contains row numbers where elements are TRUE
-  TDM <- Map(function(set, dict) fastmatch::fmatch(x = set, table = dict),
-                  sets,
-                  MoreArgs = list(dict = shingles))
+  # we store matrix as list of arrays. So we keep only TRUE values.
+
+  # get_tdm_character returns 2 things:
+  # 1) total number of unique elements in all sets
+  # 2) sparse term-document matrix represented by list.
+  # Each element of list is an arrays which contains row numbers where elements are TRUE.
+  res <- get_tdm_character(sets)
+  tdm <- res[['tdm']]
+  unique_shingles_length <- res[['dict_size']]
+
   # calculate hashes for each hash function and each row number
   hash_matrix <- get_hash_matrix(unique_shingles_length = unique_shingles_length,
                                  hashfun_number = hashfun_number,
                                  cores = cores)
-  minhashing(hash_matrix, TDM)
+  minhashing(hash_matrix, tdm)
 }

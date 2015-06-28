@@ -6,7 +6,7 @@ hashfun_1 <- function(vec, cores = 2L) {
 }
 
 #' @export
-get_hash_matrix <- function(unique_shingles_length, hashfun_number = 60L, cores = 2L) {
+get_hash_matrix <- function(unique_shingles_length, hashfun_number, cores) {
     .Call('LSHR_get_hash_matrix', PACKAGE = 'LSHR', unique_shingles_length, hashfun_number, cores)
 }
 

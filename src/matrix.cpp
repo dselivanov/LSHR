@@ -1,10 +1,7 @@
 #include "lshr.h"
-//
+
 template<class T>
-List  get_tdm(List sets) {
-//vector< vector<int> >  get_tdm(List sets) {
-  //vector< vector< int > > res( sets.size() );
-  List res( sets.size() );
+int get_tdm(List sets, vector< vector<int> > &res ) {
   unordered_map < T, int> dict;
   typename unordered_map < T, int > :: const_iterator element_it;
   int k = 0;
@@ -29,24 +26,22 @@ List  get_tdm(List sets) {
     res[k] = indices;
     k++;
   }
-  return res;
+  return dict.size();
+}
+
+template<class T>
+List  get_tdm_r (List sets) {
+  vector < vector< int > > res(sets.size());
+  int dict_size = get_tdm< T >(sets, res);
+  return List::create(Named( "dict_size" ) = dict_size,
+                      Named( "tdm" ) = wrap(res));
 }
 
 // [[Rcpp::export]]
 List  get_tdm_character(List sets) {
-  return get_tdm< string >(sets);
+  return get_tdm_r<string> (sets);
 }
 // [[Rcpp::export]]
 List  get_tdm_integer(List sets) {
-  return get_tdm< int >(sets);
+  return get_tdm_r< int > (sets);
 }
-
-// You can include R code blocks in C++ files processed with sourceCpp
-// (useful for testing and development). The R code will be automatically
-// run after the compilation.
-//
-
-// /*** R
-// get_tdm_character(list(letters[1:5], letters[3:7], letters[8:10]))
-// get_tdm_integer(list(1:5, 3:7, 8:11))
-// */
