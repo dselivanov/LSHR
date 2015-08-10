@@ -1,5 +1,8 @@
 # Locality Sensitive Hashing in R 
-LSHR - fast and memory efficient package for reducing the dimensionality of high-dimensional data. Only **minhashing** implemented at the moment.
+LSHR - fast and memory efficient package for near-neighbor search in high-dimensional data. Two LSH schemes implemented at the moment:
+
+1. Minhashing for jaccard similarity
+2. Sketching (or random projections) for cosine similarity.
 Most of ideas are based on brilliant [Mining of Massive Datasets](http://www.mmds.org) book - many thanks to authors. 
 
 # Quick reference
@@ -13,8 +16,13 @@ elems <- sapply(1:100, function(z)
 sets <-  lapply(1:100, function(z) sample(elems, sample(10:40)))
 # add near-duplicates
 sets <- c(sets, lapply(sets[1:10], function(x) c(x, sample(elems, 5))  ))
-m <- get_signature_matrix(sets = sets, hashfun_number = 60, cores = 2)
-candidate_indices <- get_candidate_pairs(signature_matrix = m, 
-                                         bands_number = 10, similarity = 0.8, verbose = T)
-candidate_indices
+# create sparse term-document matrix (in the list-of-lists form)
+tdm_lil <- get_tdm_character(sets)
+# create dense signature matrix
+jaccard_signature_matrix <- get_signature_matrix(tdm_lil, hashfun_number = 60, measure = 'jaccard', cores =  1)
+# find close pairs of sets
+candidate_indices <- get_candidate_pairs(signature_matrix = jaccard_signature_matrix,
+                                         bands_number = 10,
+                                         similarity = 0.8,
+                                         verbose = T)
 ```
