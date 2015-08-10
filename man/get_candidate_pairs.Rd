@@ -12,17 +12,17 @@ get_candidate_pairs(signature_matrix, bands_number, similarity,
 
 \item{bands_number}{number of bands for LSH algorithm.}
 
-\item{similarity}{target value of jacard similarity we are looking for.}
+\item{similarity}{target value of similarity we are looking for.}
 
-\item{verbose}{- \link{logical} print useful algorithm information.}
+\item{verbose}{- \link{logical} print lsh process information.
+(such as expected false positive rate, false negative rate,timings, etc.)}
 }
 \value{
 pairs of candidates with similarity => \code{similarity} -
 \code{\link{data.table}} with 3 colums: index1, index2, N -
 index of first candidate, index of second candidate,
-and number of buckets where they share same value. The latter provided
-only for information.
-(Intutition is following: the bigger N - the bigger similarity)
+and number of buckets where they share same value. The latter provided only for information.
+(Intutition is following: the bigger N - the stronger similarity)
 }
 \description{
 Calculating candidate pairs using locality sensitive hashing.
