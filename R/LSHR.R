@@ -5,4 +5,6 @@
 #' @useDynLib LSHR
 #' @import data.table
 #' @import magrittr
+#' @import Matrix
+#' @importFrom Rcpp evalCpp
 NULL

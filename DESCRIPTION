@@ -12,6 +12,8 @@ URL: https://github.com/dselivanov/LSHR
 BugReports: https://github.com/dselivanov/LSHR/issues
 VignetteBuilder: knitr
 LazyData: TRUE
+Depends:
+    Matrix
 Imports:
     data.table(>= 1.9.4),
     magrittr (>= 1.5),
@@ -22,4 +24,5 @@ LinkingTo:
 Suggests:
     testthat,
     roxygen2,
-    knitr
+    knitr,
+    microbenchmark
