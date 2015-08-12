@@ -21,3 +21,10 @@ lil_to_csr <- function(m_lil) {
   vals <- unlist(m_lil, recursive = T, use.names = F)
   sparseMatrix(i = rep(seq_along(n_ids), n_ids), j = vals)
 }
+
+csr_to_lil <- function(tdm) {
+  Map(FUN = function(i1,i2, ind) ind[i1 : i2],
+         tdm@p[-length(tdm@p)] + 1L,
+         tdm@p[-1L], MoreArgs = list(ind = tdm@i + 1L),
+         USE.NAMES = F)
+}
