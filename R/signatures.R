@@ -1,23 +1,18 @@
 #' @export
-get_hash_matrix <- function(tdm_lil, hashfun_number, measure, cores) {
-  ncol <- attr(tdm_lil, 'ncol')
-  # if we don't know number of columns of tdm
-  if(is.null(ncol))
-    ncol <- unlist(tdm_lil, recursive = T, use.names = F) %>% unique %>% length
-
+get_hash_matrix <- function(nrow_hash_matrix, hashfun_number, measure, cores) {
   hash_matrix <-
     if(measure == 'jaccard') {
       # calculate hashes for each hash function and each row number
-      get_minhash_matrix(unique_shingles_length = ncol,
+      get_minhash_matrix(unique_shingles_length = nrow_hash_matrix,
                          hashfun_number = hashfun_number,
                          cores = cores)
     } else if(measure == 'cosine') {
       # random_hyperpalnes
       matrix(sample(x = c (1L, -1L),
-                    size = ncol * hashfun_number,
+                    size = nrow_hash_matrix * hashfun_number,
                     # size = nrow(tdm_csr) * hashfun_number,
                     replace = T),
-             ncol = hashfun_number)
+             nrow_hash_matrix = hashfun_number)
     } else
       stop(paste(measure, "not supported"))
   hash_matrix
@@ -40,7 +35,13 @@ get_hash_matrix <- function(tdm_lil, hashfun_number, measure, cores) {
 #' tdm_lil <- create_tdm(sets)
 #' sm <- get_signature_matrix(tdm_lil, hashfun_number = 10, measure = 'jaccard', cores = 4)
 get_signature_matrix <- function (tdm_lil, hashfun_number, measure = 'jaccard', cores = parallel::detectCores()) {
-  hash_matrix <- get_hash_matrix(tdm_lil, hashfun_number, measure, cores)
+
+  nrow_hash_matrix <- attr(tdm_lil, 'ncol')
+  # if we don't know number of columns of tdm
+  if(is.null(nrow_hash_matrix))
+    nrow_hash_matrix <- unlist(tdm_lil, recursive = T, use.names = F) %>% unique %>% length
+
+  hash_matrix <- get_hash_matrix(nrow_hash_matrix, hashfun_number, measure, cores)
   if(measure == 'jaccard') {
     return( minhashing(tdm_lil, hash_matrix) )
   }
