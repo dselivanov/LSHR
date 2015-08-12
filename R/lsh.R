@@ -80,6 +80,15 @@ get_candidate_pairs <- function(signature_matrix, bands_number, similarity, verb
   detect_candidate_pairs(lsh_index, verbose)
 }
 
+validate_candidate_pairs <- function(index, signature_matrix, threshold, measure = 'jaccard') {
+  mapply(function(col1, col2, m) jaccard_atomic(m[ , col1 ], m[ , col2]) > threshold,
+         index[['index1']],
+         index[['index2']],
+         MoreArgs = list(m = signature_matrix),
+         SIMPLIFY = T,
+         USE.NAMES = F)
+}
+
 #'# @export
 hash_band <- function(row_index_bounds, signature_matrix) {
   MAX_INT = .Machine$integer.max
