@@ -30,25 +30,25 @@ BEGIN_RCPP
     return __result;
 END_RCPP
 }
-// get_tdm_character
-List get_tdm_character(List sets);
-RcppExport SEXP LSHR_get_tdm_character(SEXP setsSEXP) {
+// get_dtm_character
+List get_dtm_character(List sets);
+RcppExport SEXP LSHR_get_dtm_character(SEXP setsSEXP) {
 BEGIN_RCPP
     Rcpp::RObject __result;
     Rcpp::RNGScope __rngScope;
     Rcpp::traits::input_parameter< List >::type sets(setsSEXP);
-    __result = Rcpp::wrap(get_tdm_character(sets));
+    __result = Rcpp::wrap(get_dtm_character(sets));
     return __result;
 END_RCPP
 }
-// get_tdm_integer
-List get_tdm_integer(List sets);
-RcppExport SEXP LSHR_get_tdm_integer(SEXP setsSEXP) {
+// get_dtm_integer
+List get_dtm_integer(List sets);
+RcppExport SEXP LSHR_get_dtm_integer(SEXP setsSEXP) {
 BEGIN_RCPP
     Rcpp::RObject __result;
     Rcpp::RNGScope __rngScope;
     Rcpp::traits::input_parameter< List >::type sets(setsSEXP);
-    __result = Rcpp::wrap(get_tdm_integer(sets));
+    __result = Rcpp::wrap(get_dtm_integer(sets));
     return __result;
 END_RCPP
 }

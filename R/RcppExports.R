@@ -12,12 +12,12 @@ get_minhash_matrix <- function(unique_shingles_length, hashfun_number, cores) {
 }
 
 #' @export
-get_tdm_character <- function(sets) {
-    .Call('LSHR_get_tdm_character', PACKAGE = 'LSHR', sets)
+get_dtm_character <- function(sets) {
+    .Call('LSHR_get_dtm_character', PACKAGE = 'LSHR', sets)
 }
 
 #' @export
-get_tdm_integer <- function(sets) {
-    .Call('LSHR_get_tdm_integer', PACKAGE = 'LSHR', sets)
+get_dtm_integer <- function(sets) {
+    .Call('LSHR_get_dtm_integer', PACKAGE = 'LSHR', sets)
 }
 
