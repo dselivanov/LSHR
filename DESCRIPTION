@@ -6,12 +6,13 @@ Date: 2015-06-03
 Authors@R: person("Dmitriy", "Selivanov", role = c("aut", "cre"),
     email = "selivanov.dmitriy@gmail.com")
 Maintainer: Dmitriy Selivanov <selivanov.dmitriy@gmail.com>
-Description: More about what it does (maybe more than one line)
+Description: Fast and memory efficient duplicate-detection and near-neighbor search in high-dimensional data.
 License: MIT + file LICENSE
 URL: https://github.com/dselivanov/LSHR
 BugReports: https://github.com/dselivanov/LSHR/issues
 VignetteBuilder: knitr
 LazyData: TRUE
+SystemRequirements: C++11, [optionally] OpenMP (for multithread hashing)
 Depends:
     Matrix
 Imports:
