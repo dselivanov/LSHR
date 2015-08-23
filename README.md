@@ -18,7 +18,6 @@ sets <-  lapply(1:100, function(z) sample(elems, sample(10:40)))
 sets <- c(sets, lapply(sets[1:10], function(x) c(x, sample(elems, 5))  ))
 # create sparse term-document matrix (in the list-of-lists form)
 dtm <- create_dtm(sets, format = 'lil')
-dtm <- get_dtm_character(sets)
 jaccard_sign_mat <- get_signature_matrix(dtm, hashfun_number = 60, measure = 'jaccard',cores =  1)
 # find close pairs of sets
 candidate_indices <- get_similar_pairs(signature_matrix = jaccard_sign_mat,
