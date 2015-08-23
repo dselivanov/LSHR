@@ -2,30 +2,33 @@
 % Please edit documentation in R/signatures.R
 \name{get_signature_matrix}
 \alias{get_signature_matrix}
-\title{Calculating signature matrix using minhashing techniqe.}
+\title{Calculating signature matrix for given similarity measure.}
 \usage{
-get_signature_matrix(tdm_lil, hashfun_number, measure = "jaccard",
+get_signature_matrix(dtm, hashfun_number, measure = "jaccard",
   cores = parallel::detectCores())
 }
 \arguments{
-\item{tdm_lil}{- sparse input matrix in list of lists form: \code{\link{list}} of \code{\link{vector}}s
-It also may contain ncol attribute - number of columns.}
+\item{hashfun_number}{number of hash functions to use in construction of signature matrix.}
 
-\item{hashfun_number}{number of hash functions to calculate signature matrix.}
+\item{measure}{similarity measure we want to preserve in signature matrix: \code{\link{character}}.
+Possible values - \code{c('jaccard', 'cosine')}}
 
-\item{measure}{measure we want to calculate: \code{\link{character}}. Possible values - \code{c('jaccard', 'cosine')}}
+\item{cores}{number of CPU threads to use while calculating hashes.
+Currently related only to "jaccard" measure. Uses OpenMP under the hood.}
 
-\item{cores}{number of CPU threads to use while calculating hashes}
+\item{dtm_lil}{- sparse document-term input matrix in list of lists form: \code{\link{list}} of \code{\link{vector}}s
+length(dtm_lil) = number of documents.
+It also may contain ncol attribute - number of terms.}
 }
 \value{
-The signature matrix - \code{\link{integer}} \code{\link{matrix}} with dimension \code{hashfun_number * length(tdm_lil)}
+The signature matrix - \code{\link{integer}} \code{\link{matrix}} with dimension \code{hashfun_number * length(dtm_lil)}
 }
 \description{
-Calculating signature matrix using minhashing techniqe.
+Calculating signature matrix for given similarity measure.
 }
 \examples{
 sets <- lapply(1:10, function(x) sample(letters, sample(5:15)))
-tdm_lil <- create_tdm(sets)
-sm <- get_signature_matrix(tdm_lil, hashfun_number = 10, measure = 'jaccard', cores = 4)
+dtm_lil <- create_dtm(sets)
+sm <- get_signature_matrix(dtm_lil, hashfun_number = 10, measure = 'jaccard', cores = 4)
 }
 

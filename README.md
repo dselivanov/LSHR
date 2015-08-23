@@ -17,12 +17,13 @@ sets <-  lapply(1:100, function(z) sample(elems, sample(10:40)))
 # add near-duplicates
 sets <- c(sets, lapply(sets[1:10], function(x) c(x, sample(elems, 5))  ))
 # create sparse term-document matrix (in the list-of-lists form)
-tdm_lil <- get_tdm_character(sets)
-# create dense signature matrix
-jaccard_signature_matrix <- get_signature_matrix(tdm_lil, hashfun_number = 60, measure = 'jaccard', cores =  1)
+dtm <- create_dtm(sets, format = 'lil')
+dtm <- get_dtm_character(sets)
+jaccard_sign_mat <- get_signature_matrix(dtm, hashfun_number = 60, measure = 'jaccard',cores =  1)
 # find close pairs of sets
-candidate_indices <- get_candidate_pairs(signature_matrix = jaccard_signature_matrix,
+candidate_indices <- get_similar_pairs(signature_matrix = jaccard_sign_mat,
                                          bands_number = 10,
                                          similarity = 0.8,
                                          verbose = T)
+                                         
 ```
