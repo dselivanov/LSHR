@@ -46,6 +46,8 @@ detect_candidate_pairs <- function(lsh_index, verbose = T) {
 #' @param signature_matrix input signature matrix - \code{\link{integer}} \code{\link{matrix}}
 #' @param bands_number number of bands for LSH algorithm.
 #' @param similarity target value of similarity we are looking for.
+#' @param validate whether to perform validation and \strong{filtering out false positives
+#' based on signatires similarity}
 #' @param verbose - \link{logical} print lsh process information.
 #' (such as expected false positive rate, false negative rate,timings, etc.)
 #' @return pairs of candidates with similarity => \code{similarity} -
@@ -60,7 +62,7 @@ detect_candidate_pairs <- function(lsh_index, verbose = T) {
 #' sets <- c(sets, list(c(sets[[1]], sample(letters, 5))))
 #' sm <- get_signature_matrix(sets, 12, cores = 4)
 #' get_similar_pairs(sm, 6, 0.9)
-get_similar_pairs <- function(signature_matrix, bands_number, similarity, verbose = TRUE) {
+get_similar_pairs <- function(signature_matrix, bands_number, similarity, validate = FALSE, verbose = TRUE) {
   sm_nrow <- nrow(signature_matrix)
   if( sm_nrow %% bands_number != 0)
     stop("number of bands should be divisor of number of rows of signature matrix: 0 == nrow(signature_matrix) %% bands_number")
@@ -77,7 +79,11 @@ get_similar_pairs <- function(signature_matrix, bands_number, similarity, verbos
   # create hash tables - one per bucket
   # lsh_index = sorted hash tables
   lsh_index <- create_index(signature_matrix, bands_number, verbose)
-  detect_candidate_pairs(lsh_index, verbose) %>% validate_candidate_pairs(signature_matrix, similarity)
+  candidate_pairs <- detect_candidate_pairs(lsh_index, verbose)
+  if(validate)
+    candidate_pairs %>% validate_candidate_pairs(signature_matrix, similarity)
+  else
+    candidate_pairs
 }
 
 # function to hash bands.
