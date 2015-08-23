@@ -25,7 +25,7 @@ create_index <- function(signature_matrix, bands_number, verbose = T) {
   index
 }
 
-detect_candidate_pairs <- function(lsh_index, verbose) {
+detect_candidate_pairs <- function(lsh_index, verbose = T) {
   # look for candidates that have same hash value in a given band.
   start <- Sys.time()
   dt = lsh_index[ , list(index, .N), keyby = list(band_index, hash_value) ][N > 1, .(band_index, hash_value, index)]
@@ -40,7 +40,7 @@ detect_candidate_pairs <- function(lsh_index, verbose) {
 }
 
 #' @export
-#' @name get_candidate_pairs
+#' @name get_similar_pairs
 #' @title Calculating candidate pairs using locality sensitive hashing.
 #'
 #' @param signature_matrix input signature matrix - \code{\link{integer}} \code{\link{matrix}}
@@ -59,8 +59,8 @@ detect_candidate_pairs <- function(lsh_index, verbose) {
 #' # add set similar to first set to the end of list
 #' sets <- c(sets, list(c(sets[[1]], sample(letters, 5))))
 #' sm <- get_signature_matrix(sets, 12, cores = 4)
-#' get_candidate_pairs(sm, 6, 0.9)
-get_candidate_pairs <- function(signature_matrix, bands_number, similarity, verbose = TRUE) {
+#' get_similar_pairs(sm, 6, 0.9)
+get_similar_pairs <- function(signature_matrix, bands_number, similarity, verbose = TRUE) {
   sm_nrow <- nrow(signature_matrix)
   if( sm_nrow %% bands_number != 0)
     stop("number of bands should be divisor of number of rows of signature matrix: 0 == nrow(signature_matrix) %% bands_number")
@@ -77,19 +77,10 @@ get_candidate_pairs <- function(signature_matrix, bands_number, similarity, verb
   # create hash tables - one per bucket
   # lsh_index = sorted hash tables
   lsh_index <- create_index(signature_matrix, bands_number, verbose)
-  detect_candidate_pairs(lsh_index, verbose)
+  detect_candidate_pairs(lsh_index, verbose) %>% validate_candidate_pairs(signature_matrix, similarity)
 }
 
-validate_candidate_pairs <- function(index, signature_matrix, threshold, measure = 'jaccard') {
-  mapply(function(col1, col2, m) jaccard_atomic(m[ , col1 ], m[ , col2]) > threshold,
-         index[['index1']],
-         index[['index2']],
-         MoreArgs = list(m = signature_matrix),
-         SIMPLIFY = T,
-         USE.NAMES = F)
-}
-
-#'# @export
+# function to hash bands.
 hash_band <- function(row_index_bounds, signature_matrix) {
   MAX_INT = .Machine$integer.max
   row_indices <- row_index_bounds[[1]]:row_index_bounds[[2]]
