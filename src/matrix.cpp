@@ -6,7 +6,7 @@ void get_dtm(List sets, vector< vector<int> > &res, vector<T> &terms ) {
   typename unordered_map < T, int > :: const_iterator element_it;
   int k = 0;
   for (auto it : sets) {
-    checkUserInterrupt();
+    //checkUserInterrupt();
     vector<T> current_set = it;
     int K = current_set.size();
     int j = 0;
