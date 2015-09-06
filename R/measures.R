@@ -20,15 +20,22 @@ cosine_atomic <- function(x, y) {
 }
 
 #' @name cosine_signatures
-#' @title similarity between two vectors.
+#' @title similarity between two signatures
 #' @param x - \link{vector}
 #' @param y - \link{vector}
 #' @return \link{numeric} cosine similarity coefficient
-#'@export
 cosine_signatures <- function(x, y) {
   cos(pi * (1 -sum(x == y) / length(x)))
 }
 
+#' @name jaccard_signatures
+#' @title similarity between two signatures
+#' @param x - \link{vector}
+#' @param y - \link{vector}
+#' @return \link{numeric} cosine similarity coefficient
+jaccard_signatures <- function(x, y) {
+  sum(x == y) / length(x)
+}
 
 
 #' @name cosine

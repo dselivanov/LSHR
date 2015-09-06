@@ -27,9 +27,9 @@ get_validation_function <- function(signature_matrix) {
 }
 
 get_validation_function.LSHR_Sketch <- function(signature_matrix) {
-    cosine_signatures
+  cosine_signatures
 }
 
 get_validation_function.LSHR_Minhash <- function(signature_matrix) {
-  jaccard_atomic
+  jaccard_signatures
 }
