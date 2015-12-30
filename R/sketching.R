@@ -1,8 +1,4 @@
 sketching <- function(dtm, hash_matrix) {
-  UseMethod("sketching")
-}
-
-sketching.Matrix <- function(dtm, hash_matrix) {
   sketches <- t(dtm %*% hash_matrix)
   # sketches - **numeric matrix** (because of Matrix %*% operator behaviour)
   # **sign()** also returns **numeric** values
@@ -22,8 +18,4 @@ sketching.Matrix <- function(dtm, hash_matrix) {
   # keep hash_matrix for near-neighbor search queries
   setattr(x = sketches, name = 'hash_matrix', value = hash_matrix)
   sketches
-}
-
-sketching.list <- function(dtm, hash_matrix) {
-  sketching.Matrix(lil_to_ngC(dtm), hash_matrix)
 }

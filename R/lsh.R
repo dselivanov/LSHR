@@ -2,7 +2,7 @@
 create_index <- function(signature_matrix, bands_number, verbose = T) {
   sm_nrow <- nrow(signature_matrix)
   sm_ncol <- ncol(signature_matrix)
-  if( sm_nrow %% bands_number != 0)
+  if ( sm_nrow %% bands_number != 0)
     stop("number of bands should be divisor of number of rows of signature matrix: 0 == nrow(signature_matrix) %% bands_number")
   rows_per_band <- sm_nrow / bands_number
   # calculate band borders for splitting signarure matrix
@@ -11,7 +11,7 @@ create_index <- function(signature_matrix, bands_number, verbose = T) {
   bands_hashes <- Map(hash_band, splits,
                       MoreArgs = list(signature_matrix = signature_matrix ))
   end <- Sys.time()
-  if(verbose)
+  if (verbose)
     print( paste( "hashing takes", difftime(end, start) ) )
   start <- Sys.time()
   # construct table for
@@ -20,7 +20,7 @@ create_index <- function(signature_matrix, bands_number, verbose = T) {
                       band_index = rep(seq_len(bands_number), each = sm_ncol),
                       key = c('band_index', 'hash_value'))
   end <- Sys.time()
-  if(verbose)
+  if (verbose)
     print( paste( "indexing takes", difftime(end, start) ) )
   index
 }
@@ -34,7 +34,7 @@ detect_candidate_pairs <- function(lsh_index, verbose = T) {
   # combine duplicated candidate pairs and get number of bands where band hashes are identical
   res = dt[, .N, keyby = c('index1', 'index2')]
   end <- Sys.time()
-  if(verbose)
+  if (verbose)
     print( paste( "detecting candidates takes", difftime(end, start) ) )
   res
 }
@@ -60,15 +60,15 @@ detect_candidate_pairs <- function(lsh_index, verbose = T) {
 #' sets <- lapply(1:10, function(x) sample(letters, sample(5:15)))
 #' # add set similar to first set to the end of list
 #' sets <- c(sets, list(c(sets[[1]], sample(letters, 5))))
-#' sm <- get_signature_matrix(sets, 12, cores = 4)
+#' sm <- get_signature_matrix(sets, 12)
 #' get_similar_pairs(sm, 6, 0.9)
 get_similar_pairs <- function(signature_matrix, bands_number, similarity, validate = FALSE, verbose = TRUE) {
   sm_nrow <- nrow(signature_matrix)
-  if( sm_nrow %% bands_number != 0)
+  if ( sm_nrow %% bands_number != 0)
     stop("number of bands should be divisor of number of rows of signature matrix: 0 == nrow(signature_matrix) %% bands_number")
   rows_per_band <- sm_nrow / bands_number
 
-  if(verbose) {
+  if (verbose) {
     prob_become_candidate <- 1 - (1 - similarity ^ rows_per_band) ^ bands_number
     print(paste('Looking for sets with similarity',
                 round(similarity, 2)))
@@ -80,7 +80,7 @@ get_similar_pairs <- function(signature_matrix, bands_number, similarity, valida
   # lsh_index = sorted hash tables
   lsh_index <- create_index(signature_matrix, bands_number, verbose)
   candidate_pairs <- detect_candidate_pairs(lsh_index, verbose)
-  if(validate)
+  if (validate)
     candidate_pairs %>% validate_candidate_pairs(signature_matrix, similarity)
   else
     candidate_pairs
