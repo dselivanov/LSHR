@@ -1,6 +1,1 @@
 CXX_STD = CXX11
-## -- compiling for OpenMP
-PKG_CXXFLAGS=-fopenmp
-##
-## -- linking for OpenMP
-PKG_LIBS= -fopenmp -lgomp

@@ -1,29 +1,28 @@
 Package: LSHR
 Type: Package
 Title: Locality Sensitive Hashing In R
-Version: 0.1.0
+Version: 0.1.1
 Date: 2015-06-03
 Authors@R: person("Dmitriy", "Selivanov", role = c("aut", "cre"),
     email = "selivanov.dmitriy@gmail.com")
 Maintainer: Dmitriy Selivanov <selivanov.dmitriy@gmail.com>
-Description: Fast and memory efficient duplicate-detection and near-neighbor search in high-dimensional data.
+Description: Fast and memory efficient duplicate-detection and near-neighbor
+    search in high-dimensional data.
 License: MIT + file LICENSE
 URL: https://github.com/dselivanov/LSHR
 BugReports: https://github.com/dselivanov/LSHR/issues
 VignetteBuilder: knitr
-LazyData: TRUE
-SystemRequirements: C++11, [optionally] OpenMP (for multithread hashing)
+SystemRequirements: C++11,
 Depends:
     Matrix
 Imports:
     data.table(>= 1.9.4),
     magrittr (>= 1.5),
-    parallel,
     Rcpp (>= 0.10.3)
-LinkingTo:
-    Rcpp
+LinkingTo: Rcpp
 Suggests:
     testthat,
     roxygen2,
     knitr,
     microbenchmark
+RoxygenNote: 5.0.0

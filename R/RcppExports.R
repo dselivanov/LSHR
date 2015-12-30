@@ -2,22 +2,12 @@
 # Generator token: 10BE3573-1514-4C36-9D1C-5A225CD40393
 
 #' @export
-hashfun_1 <- function(vec, cores = 2L) {
-    .Call('LSHR_hashfun_1', PACKAGE = 'LSHR', vec, cores)
+hashfun_1 <- function(vec) {
+    .Call('LSHR_hashfun_1', PACKAGE = 'LSHR', vec)
 }
 
 #' @export
-get_minhash_matrix <- function(unique_shingles_length, hashfun_number, cores) {
-    .Call('LSHR_get_minhash_matrix', PACKAGE = 'LSHR', unique_shingles_length, hashfun_number, cores)
-}
-
-#' @export
-get_dtm_character <- function(sets) {
-    .Call('LSHR_get_dtm_character', PACKAGE = 'LSHR', sets)
-}
-
-#' @export
-get_dtm_integer <- function(sets) {
-    .Call('LSHR_get_dtm_integer', PACKAGE = 'LSHR', sets)
+get_minhash_matrix <- function(unique_shingles_length, hashfun_number, seed) {
+    .Call('LSHR_get_minhash_matrix', PACKAGE = 'LSHR', unique_shingles_length, hashfun_number, seed)
 }
 
