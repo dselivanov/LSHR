@@ -7,22 +7,22 @@ Most of ideas are based on brilliant [Mining of Massive Datasets](http://www.mmd
 
 # Quick reference
 ```R
-set.seed(10)
+# devtools::install_github('dselivanov/text2vec')
+library(text2vec)
 library(LSHR)
-# generate element of sets
-elems <- sapply(1:100, function(z) 
-  paste(sample(letters, sample(3:7), replace = T), collapse=''))
-# generate sets
-sets <-  lapply(1:100, function(z) sample(elems, sample(10:40)))
-# add near-duplicates
-sets <- c(sets, lapply(sets[1:10], function(x) c(x, sample(elems, 5))  ))
-# create sparse term-document matrix (in the list-of-lists form)
-dtm <- create_dtm(sets, format = 'lil')
-jaccard_sign_mat <- get_signature_matrix(dtm, hashfun_number = 100, measure = 'jaccard',cores =  1)
-# find close pairs of sets
-candidate_indices <- get_similar_pairs(signature_matrix = jaccard_sign_mat,
-                                         bands_number = 10,
-                                         similarity = 0.8,
-                                         verbose = T)
+data("movie_review")
 
+it <- itoken(movie_review$review, preprocess_function = tolower, tokenizer = word_tokenizer)
+
+# create document-term matrix using hashing trick vectorizer
+corp <- create_hash_corpus(it, feature_hasher = feature_hasher(hash_size = 2^14, ngram = c(1,1)))
+dtm <- get_dtm(corp)
+
+jaccard_sign_mat <- get_signature_matrix(dtm, hashfun_number = 60, measure = 'jaccard', seed = 1L)
+
+candidate_indices <- get_similar_pairs(signature_matrix = jaccard_sign_mat,
+                                       bands_number = 5,
+                                       similarity = 0.9,
+                                       verbose = T)
+candidate_indices
 ```
