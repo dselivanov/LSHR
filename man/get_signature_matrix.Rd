@@ -5,25 +5,33 @@
 \title{Calculating signature matrix for given similarity measure.}
 \usage{
 get_signature_matrix(dtm, hashfun_number, measure = c("jaccard", "cosine"),
-  seed = 0L)
+  seed = 0L, ...)
 }
 \arguments{
-\item{hashfun_number}{number of hash functions to use in construction of signature matrix.}
+\item{hashfun_number}{number of hash functions to use in construction of
+signature matrix.}
 
-\item{measure}{similarity measure we want to preserve in signature matrix: \code{\link{character}}.
-Possible values - \code{c('jaccard', 'cosine')}
-Currently related only to "jaccard" measure. Uses OpenMP under the hood.}
+\item{measure}{similarity measure we want to preserve in signature matrix:
+\code{\link{character}}. Possible values - \code{c('jaccard', 'cosine')}}
 
-\item{dtm_lil}{- sparse document-term input matrix in list of lists form: \code{\link{list}} of \code{\link{vector}}s
+\item{...}{parameters to \link{mclapply} function, which is used internally.
+For example you can provide \code{mc.cores = 4} to run minhashing
+algorithm on 4 cpu cores.}
+
+\item{dtm_lil}{- sparse document-term input matrix in list of lists form:
+\code{\link{list}} of \code{\link{vector}}s
 length(dtm_lil) = number of documents.
 It also may contain ncol attribute - number of terms.}
 }
 \value{
-The signature matrix - \code{\link{integer}} \code{\link{matrix}} with dimension \code{hashfun_number * length(dtm_lil)}
+The signature matrix - \code{\link{integer}} \code{\link{matrix}}
+with dimension \code{hashfun_number * length(dtm_lil)}
 }
 \examples{
 sets <- lapply(1:10, function(x) sample(letters, sample(5:15)))
 dtm_lil <- create_dtm(sets)
-sm <- get_signature_matrix(dtm_lil, hashfun_number = 10, measure = 'jaccard')
+sm <- get_signature_matrix(dtm_lil, hashfun_number = 10, measure = 'jaccard',
+mc.cores = 4)
+
 }
 

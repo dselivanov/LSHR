@@ -3,6 +3,7 @@
 S3method(get_neighbors,LSHR_Minhash)
 export(cosine)
 export(cosine_atomic)
+export(get_hash_matrix)
 export(get_minhash_matrix)
 export(get_neighbors)
 export(get_signature_matrix)

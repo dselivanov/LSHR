@@ -4,18 +4,12 @@
 \alias{get_similar_pairs}
 \title{Calculating candidate pairs using locality sensitive hashing.}
 \usage{
-get_similar_pairs(signature_matrix, bands_number, similarity,
-  validate = FALSE, verbose = TRUE)
+get_similar_pairs(signature_matrix, bands_number, verbose = TRUE)
 }
 \arguments{
 \item{signature_matrix}{input signature matrix - \code{\link{integer}} \code{\link{matrix}}}
 
 \item{bands_number}{number of bands for LSH algorithm.}
-
-\item{similarity}{target value of similarity we are looking for.}
-
-\item{validate}{whether to perform validation and \strong{filtering out false positives
-based on signatires similarity}}
 
 \item{verbose}{- \link{logical} print lsh process information.
 (such as expected false positive rate, false negative rate,timings, etc.)}
