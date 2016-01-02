@@ -18,11 +18,10 @@ it <- itoken(movie_review$review, preprocess_function = tolower, tokenizer = wor
 corp <- create_hash_corpus(it, feature_hasher = feature_hasher(hash_size = 2^14, ngram = c(1,1)))
 dtm <- get_dtm(corp)
 
-jaccard_sign_mat <- get_signature_matrix(dtm, hashfun_number = 60, measure = 'jaccard', seed = 1L)
+jaccard_sign_mat <- get_signature_matrix(dtm, hashfun_number = 120, measure = 'jaccard', seed = 1L, mc.cores=4)
 
 candidate_indices <- get_similar_pairs(signature_matrix = jaccard_sign_mat,
                                        bands_number = 5,
-                                       similarity = 0.9,
                                        verbose = T)
 candidate_indices
 ```

@@ -1,25 +1,24 @@
 # vectorized version of minhash algorithm with many hash functions
-minhashing <- function(dtm, hash_matrix) {
+minhashing <- function(dtm, hash_matrix, ...) {
 
   if (!inherits(dtm, 'dgCMatrix'))
     dtm <- as(dtm, 'dgCMatrix')
 
-  ndoc = nrow(dtm)
+  dtm <- LSHR:::to_lil( t(dtm) )
 
-  dtm <- to_lil( t(dtm) )
+  minhash_signatures <-
+    parallel::mcmapply(
+      function(nnz, hm) {
+        mat <- hm[nnz, , drop = FALSE]
+        matrixStats::colMins(mat)
+      },
+      dtm,
+      MoreArgs = list(hm = hash_matrix),
+      ...)
 
-  MAX_INT = .Machine$integer.max
-  hashfun_number = ncol(hash_matrix)
-
-  minhash_signatures <- matrix(data = rep(MAX_INT, hashfun_number * ndoc), nrow = hashfun_number, ncol = ndoc)
-  for (clmn in seq_along(dtm)) {
-    mat_non_zero_rows <- dtm[[clmn]]
-    mat <- hash_matrix[mat_non_zero_rows, , drop = FALSE]
-    minhash_signatures[, clmn] <- pmin.int(minhash_signatures[, clmn],  matrixStats::colMins(mat))
-  }
   class(minhash_signatures) <- 'LSHR_Minhash'
   # keep hash_matrix for near-neighbor search queries
-  setattr(x = minhash_signatures, name = 'hash_matrix', value = hash_matrix)
+  attr(minhash_signatures, 'hash_matrix', hash_matrix)
   minhash_signatures
 }
 

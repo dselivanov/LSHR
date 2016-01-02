@@ -1,8 +1,8 @@
 Package: LSHR
 Type: Package
 Title: Locality Sensitive Hashing In R
-Version: 0.1.1
-Date: 2015-06-03
+Version: 0.1.2
+Date: 2016-01-02
 Authors@R: person("Dmitriy", "Selivanov", role = c("aut", "cre"),
     email = "selivanov.dmitriy@gmail.com")
 Maintainer: Dmitriy Selivanov <selivanov.dmitriy@gmail.com>
@@ -18,11 +18,10 @@ Depends:
 Imports:
     data.table(>= 1.9.4),
     magrittr (>= 1.5),
-    Rcpp (>= 0.10.3)
+    Rcpp (>= 0.10.3),
+    parallel
 LinkingTo: Rcpp
 Suggests:
-    testthat,
     roxygen2,
     knitr,
-    microbenchmark
 RoxygenNote: 5.0.0
