@@ -3,7 +3,11 @@ LSHR - fast and memory efficient package for near-neighbor search in high-dimens
 
 1. Minhashing for jaccard similarity
 2. Sketching (or random projections) for cosine similarity.
-Most of ideas are based on brilliant [Mining of Massive Datasets](http://www.mmds.org) book - many thanks to authors. 
+Most of ideas are based on brilliant [Mining of Massive Datasets](http://www.mmds.org) book. 
+
+# Materials
+
+* [Slides](http://www.slideshare.net/MailRuGroup/okru-finding-similar-items-in-highdimensional-spaces-locality-sensitive-hashing) (in english) and [video](https://youtu.be/ko0a0Z75oZQ?list=PLcJ8pdaABCSk1dNtpgaHvuV5y2gWItuUO) (in russian) from my talk at Moscow Data Science meetup.
 
 # Quick reference
 ```R
