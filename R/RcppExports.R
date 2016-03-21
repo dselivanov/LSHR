@@ -11,3 +11,11 @@ get_minhash_matrix <- function(unique_shingles_length, hashfun_number, seed) {
     .Call('LSHR_get_minhash_matrix', PACKAGE = 'LSHR', unique_shingles_length, hashfun_number, seed)
 }
 
+hash_signatures <- function(m, bands_number, rows_per_band) {
+    .Call('LSHR_hash_signatures', PACKAGE = 'LSHR', m, bands_number, rows_per_band)
+}
+
+pairs <- function(lst) {
+    .Call('LSHR_pairs', PACKAGE = 'LSHR', lst)
+}
+

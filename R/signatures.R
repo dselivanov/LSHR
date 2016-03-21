@@ -20,7 +20,7 @@ get_hash_matrix <- function(dtm, hashfun_number, measure = c('jaccard', 'cosine'
       cosine =  matrix(sample(x = c(1L, -1L),
                               size = vocab_size * hashfun_number,
                               replace = T),
-                       ncol = hashfun_number),
+                       nrow = hashfun_number),
       stop(paste(measure, "not supported")))
 
   hash_matrix

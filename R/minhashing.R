@@ -9,16 +9,11 @@ minhashing <- function(dtm, hash_matrix, ...) {
   minhash_signatures <-
     parallel::mcmapply(
       function(nnz, hm) {
-        mat <- hm[nnz, , drop = FALSE]
-        matrixStats::colMins(mat)
+        matrixStats::rowMins(hm[, nnz, drop = FALSE])
       },
       dtm,
-      MoreArgs = list(hm = hash_matrix),
-      ...)
+      MoreArgs = list(hm = hash_matrix), ...)
 
-  class(minhash_signatures) <- 'LSHR_Minhash'
-  # keep hash_matrix for near-neighbor search queries
-  attr(minhash_signatures, 'hash_matrix', hash_matrix)
   minhash_signatures
 }
 

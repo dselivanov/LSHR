@@ -19,9 +19,10 @@ Imports:
     data.table(>= 1.9.4),
     magrittr (>= 1.5),
     Rcpp (>= 0.10.3),
-    parallel
+    parallel,
+    ggplot2
 LinkingTo: Rcpp
 Suggests:
     roxygen2,
     knitr,
-RoxygenNote: 5.0.0
+RoxygenNote: 5.0.1
