@@ -7,3 +7,9 @@ split_vector <- function(x, splits) {
   knots = ceiling(seq.int(from = 1, to = length(x) + 1, length.out = splits  + 1))
   mapply(FUN = function(lower, upper) list(c(lower, upper)), knots[-length(knots)], knots[-1] - 1)
 }
+
+divisors <- function(x) {
+  y <- seq_len(x)
+  y <- y[-c(1, length(y))]
+  y[ x %% y == 0 ]
+}
