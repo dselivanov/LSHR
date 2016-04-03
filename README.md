@@ -19,12 +19,14 @@ it <- itoken(movie_review$review, preprocess_function = tolower, tokenizer = wor
 dtm <- create_dtm(it, hash_vectorizer())
 
 hashfun_number = 120
-get_s_curve(hashfun_number, n_bands_min = 5, n_rows_per_band_min = 5)
+s_curve <- get_s_curve(hashfun_number, n_bands_min = 5, n_rows_per_band_min = 5)
+# Examine S-curve.
+# Find tradeoff between accuracy and false-positive rate.
 ```
 ![S-curves](https://cloud.githubusercontent.com/assets/5123805/13917531/82d5162a-ef72-11e5-8f5a-59a8d1f1f729.png)
 ```R
 options( mc.cores = 4)
-system.time(sign_mat <- get_signature_matrix(dtm, hashfun_number = hashfun_number, measure = 'jaccard', seed = 12L))
+sign_mat <- get_signature_matrix(dtm, hashfun_number, 'jaccard', seed = 12L)
 
 candidate_indices <- get_similar_pairs(signature_matrix = sign_mat,
                                        bands_number = 5,
