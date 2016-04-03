@@ -2,22 +2,16 @@
 % Please edit documentation in R/validate.R
 \name{validate_candidate_pairs}
 \alias{validate_candidate_pairs}
-\title{Validate candidate pairs - remove false positive candidates}
+\title{Validate candidate pairs - calculates actual distances on candidate pairs}
 \usage{
-validate_candidate_pairs(candidate_indices, signature_matrix, similarity)
+validate_candidate_pairs(m, i1, i2, similarity_measure = c("cosine",
+  "jaccard"))
 }
 \arguments{
-\item{candidate_indices}{- \link{data.table} (or \link{data.frame}) containing columns
-\code{index1}, \code{index2} - indices of documents in candidate pair}
+\item{m}{- input matrix}
 
-\item{signature_matrix}{input signature matrix - \code{\link{integer}} \code{\link{matrix}}}
+\item{i1}{first candidate indices}
 
-\item{similarity}{similarity threshold. Pairs with signatures similarity >= threshold
-will become near-neighbors.
-Pairs with signatures similarity < threshold will treated as false positives and filtered out.}
-}
-\value{
-\link{data.table} (or \link{data.frame}) containing columns
-\code{index1}, \code{index2} - indices of similar documents without false positives
+\item{i2}{second candidate indices}
 }
 

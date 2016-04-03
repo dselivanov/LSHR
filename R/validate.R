@@ -1,35 +1,31 @@
-# FIXME
-# would be nice to move this into RCpp
 #' @export
 #' @name validate_candidate_pairs
-#' @title Validate candidate pairs - remove false positive candidates
-#' @param candidate_indices - \link{data.table} (or \link{data.frame}) containing columns
+#' @title Validate candidate pairs - calculates actual distances on candidate pairs
+#' @param m - input matrix
+#' @param i1 first candidate indices
+#' @param i2 second candidate indices
+#' @similarity_measure similarity_measure to check. On of \code{"cosine"} or \code{"jaccard"}.
 #' \code{index1}, \code{index2} - indices of documents in candidate pair
-#' @param signature_matrix input signature matrix - \code{\link{integer}} \code{\link{matrix}}
-#' @param similarity similarity threshold. Pairs with signatures similarity >= threshold
-#' will become near-neighbors.
-#' Pairs with signatures similarity < threshold will treated as false positives and filtered out.
-#' @return \link{data.table} (or \link{data.frame}) containing columns
-#' \code{index1}, \code{index2} - indices of similar documents without false positives
-validate_candidate_pairs <- function(candidate_indices, signature_matrix, similarity) {
-  validation_function <- get_validation_function(signature_matrix)
-  ind <- mapply(function(col1, col2, m) validation_function(m[ , col1 ], m[ , col2]) >= similarity,
-                candidate_indices[['index1']],
-                candidate_indices[['index2']],
-         MoreArgs = list(m = signature_matrix),
-         SIMPLIFY = T,
-         USE.NAMES = F)
-  candidate_indices[which(ind)]
+
+validate_candidate_pairs <- function(m, i1, i2, similarity_measure = c('cosine', 'jaccard')) {
+  similarity_measure <- match.arg(similarity_measure)
+  switch(similarity_measure,
+         jaccard = validate_jaccard(m, i1, i2),
+         cosine = validate_cosine(m, i1, i2),
+         stop("similarity_measure not suuported (yet)!"))
 }
 
-get_validation_function <- function(signature_matrix) {
-  UseMethod("get_validation_function")
+validate_jaccard <- function(m, i1, i2) {
+  # ensure we work with binary matrix
+  m <- sign(m)
+  m1 <- m[i1, , drop = FALSE]
+  m2 <- m[i2, , drop = FALSE]
+  intersect <- rowSums(m1 * m2 )
+  union <- rowSums( sign( m1 + m2) )
+  intersect / union
 }
 
-get_validation_function.LSHR_Sketch <- function(signature_matrix) {
-  cosine_signatures
-}
-
-get_validation_function.LSHR_Minhash <- function(signature_matrix) {
-  jaccard_signatures
+validate_cosine <- function(m, i1, i2) {
+  m <- m / sqrt(Matrix::rowSums(m ^ 2))
+  rowSums(m[i1, , drop = FALSE] * m[i2, , drop = FALSE])
 }
