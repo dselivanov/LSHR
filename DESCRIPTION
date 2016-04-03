@@ -19,6 +19,7 @@ Imports:
     data.table(>= 1.9.4),
     magrittr (>= 1.5),
     Rcpp (>= 0.10.3),
+    matrixStats,
     parallel,
     ggplot2
 LinkingTo: Rcpp
