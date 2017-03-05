@@ -13,45 +13,42 @@
 #' (Intutition is following: the bigger N - the stronger similarity)
 #'
 #' @examples
-#' sets <- lapply(1:10, function(x) sample(letters, sample(5:15)))
+#' sets = lapply(1:10, function(x) sample(letters, sample(5:15)))
 #' # add set similar to first set to the end of list
-#' sets <- c(sets, list(c(sets[[1]], sample(letters, 5))))
-#' sm <- get_signature_matrix(sets, 12)
+#' sets = c(sets, list(c(sets[[1]], sample(letters, 5))))
+#' sm = get_signature_matrix(sets, 12)
 #' get_similar_pairs(sm, 6, 0.9)
-get_similar_pairs <- function(signature_matrix, bands_number, verbose = TRUE) {
-  sm_nrow <- nrow(signature_matrix)
-  sm_ncol <- ncol(signature_matrix)
+get_similar_pairs = function(signature_matrix, bands_number, verbose = TRUE) {
+  sm_nrow = nrow(signature_matrix)
+  sm_ncol = ncol(signature_matrix)
 
   if ( sm_nrow %% bands_number != 0)
     stop("number of bands should be divisor of number of rows of signature matrix: 0 == nrow(signature_matrix) %% bands_number")
 
   # create hash tables - one per bucket
   # lsh_index = sorted hash tables
-  start <- Sys.time()
-  hashed_signatures <- hash_signatures(m = signature_matrix, bands_number, rows_per_band = sm_nrow / bands_number)
-  if (verbose)
-    print( paste( "hashing takes", round(difftime(Sys.time(), start, units = 'secs'), 3), 'sec' ) )
+  start = Sys.time()
+  hashed_signatures = hash_signatures(m = signature_matrix, bands_number, rows_per_band = sm_nrow / bands_number)
+  if (verbose) print( sprintf( "hashing in %.3f sec", difftime(Sys.time(), start, units = 'secs') ) )
 
   # make array - unlist by column
-  dim(hashed_signatures) <- NULL
-  start <- Sys.time()
+  dim(hashed_signatures) = NULL
+  start = Sys.time()
   dt = data.table(hash_val = hashed_signatures,
-                  band_id = rep(1:bands_number, each = sm_ncol),
-                  id = rep(1:sm_ncol, times = bands_number ),
-                  key = c('hash_val',  'band_id'))
-  if (verbose)
-    print( paste( "indexing", round(difftime(Sys.time(), start, units = 'secs'), 3), 'sec' ) )
+                  band_id  = rep(seq_len(bands_number), each = sm_ncol),
+                  id1      = rep(seq_len(sm_ncol),times = bands_number ))
+  dt[, id2 := id1]
 
-  start <- Sys.time()
-  comb = dt[, list(candidate_ids = list(id), .N), by = .(hash_val, band_id)][N > 1, .(candidate_ids, band_id)]
-  if (verbose)
-    print( paste( "combining", round(difftime(Sys.time(), start, units = 'secs'), 3), 'sec' ) )
+  start = Sys.time()
+  # join with itself to receive candidates pairs
+  dt = dt[dt, on = .(hash_val = hash_val, band_id = band_id, id1 < id2), nomatch = 0, allow.cartesian = T]
+  if (verbose) print( sprintf( "generating pairs %.3f sec", difftime(Sys.time(), start, units = 'secs') ) )
 
-  start <- Sys.time()
-  res = pairs(comb$candidate_ids)
-  if (verbose)
-    print( paste( "generating pairs ", round(difftime(Sys.time(), start, units = 'secs'), 3), 'sec' ) )
+  start = Sys.time()
+  # caclulate how many times each pair became candidate
+  dt = dt[, .N, keyby = .(id1, id2)]
+  if (verbose) print( sprintf( "finding unique pairs %.3f sec", difftime(Sys.time(), start, units = 'secs') ) )
 
-  setDT(res)
+  dt
 }
 

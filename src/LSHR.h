@@ -1,6 +1,4 @@
 #include <Rcpp.h>
-//// Enable C++11 via this plugin (Rcpp 0.10.3 or later)
-//// [[Rcpp::plugins(cpp11)]]
 using namespace Rcpp;
 using namespace std;
 #include <Rcpp.h>

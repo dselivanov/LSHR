@@ -32,7 +32,7 @@ get_s_curve <- function(number_hashfun,
         scale_color_discrete("bands_number : rows_per_band")
     print(g)
   }
-
+  attr(s_curve, "ggplot") = g
   invisible(s_curve)
 }
 
