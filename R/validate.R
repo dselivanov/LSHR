@@ -26,6 +26,7 @@ validate_jaccard <- function(m, i1, i2) {
 }
 
 validate_cosine <- function(m, i1, i2) {
-  m <- m / sqrt(Matrix::rowSums(m ^ 2))
+  # normalize input
+  m <-  Diagonal(nrow(m), 1 / sqrt(Matrix::rowSums(m ^ 2))) %*% m
   rowSums(m[i1, , drop = FALSE] * m[i2, , drop = FALSE])
 }
