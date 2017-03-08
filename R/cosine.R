@@ -42,11 +42,11 @@ get_similar_pairs_cosine <- function(X, bands_number, rows_per_band, seed = 1L, 
     if (verbose) message( sprintf( "band %02d - generating sketch %.3f sec", i, difftime(Sys.time(), start, units = 'secs') ) )
     #------------------------------------------------------
     start = Sys.time()
-    dt = data.frame(hash_val = x, band_id = i, id1 = seq_len(N))
+    dt = data.frame(hash_val = x, id1 = seq_len(N))
     setDT(dt)
     dt[, id2 := id1]
     # join with itself to receive candidates pairs
-    dt = dt[dt, on = .(hash_val = hash_val, band_id = band_id, id1 > id2), nomatch = 0, allow.cartesian = T]
+    dt = dt[dt, on = .(hash_val = hash_val, id1 > id2), nomatch = 0, allow.cartesian = T]
     # caclulate how many times each pair became candidate
     dt = dt[, .N, keyby = .(id1, id2)]
     if (verbose) message( sprintf( "band %02d - generating pairs  %.3f sec", i, difftime(Sys.time(), start, units = 'secs') ) )
@@ -56,8 +56,8 @@ get_similar_pairs_cosine <- function(X, bands_number, rows_per_band, seed = 1L, 
     dt
   }, mc.cores = mc.cores, ...)
   start = Sys.time()
-  sketches = rbindlist(sketches)
-  sketches = sketches[, .(N = sum(N)), keyby = .(id1, id2)]
+  sketches = rbindlist(sketches);gc()
+  sketches = sketches[, .(N = sum(N)), keyby = .(id1, id2)];gc()
   if (verbose) message( sprintf( "REDUCE all bands stat %.3f sec", difftime(Sys.time(), start, units = 'secs') ) )
   sketches
 }

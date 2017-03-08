@@ -29,7 +29,7 @@ s_curve <- get_s_curve(hashfun_number, n_bands_min = 5, n_rows_per_band_min = 5)
 seed = 1
 pairs = get_similar_pairs(dtm, bands_number = 10, rows_per_band = 32, distance = 'cosine', seed = seed)
 
-# pairs                                       
+pairs[order(-N)]
 #        id1  id2  N
 #    1: 1054 1417 10
 #    2: 1084 3462 10
