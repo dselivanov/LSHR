@@ -16,6 +16,17 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// hashfun_2
+Rcpp::IntegerVector hashfun_2(IntegerVector vec);
+RcppExport SEXP LSHR_hashfun_2(SEXP vecSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< IntegerVector >::type vec(vecSEXP);
+    rcpp_result_gen = Rcpp::wrap(hashfun_2(vec));
+    return rcpp_result_gen;
+END_RCPP
+}
 // get_minhash_matrix
 IntegerVector get_minhash_matrix(uint32_t unique_shingles_length, uint32_t hashfun_number, uint32_t seed);
 RcppExport SEXP LSHR_get_minhash_matrix(SEXP unique_shingles_lengthSEXP, SEXP hashfun_numberSEXP, SEXP seedSEXP) {
@@ -29,6 +40,17 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// sign_bit
+IntegerMatrix sign_bit(NumericMatrix x);
+RcppExport SEXP LSHR_sign_bit(SEXP xSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< NumericMatrix >::type x(xSEXP);
+    rcpp_result_gen = Rcpp::wrap(sign_bit(x));
+    return rcpp_result_gen;
+END_RCPP
+}
 // hash_signatures
 IntegerMatrix hash_signatures(IntegerMatrix m, int bands_number, int rows_per_band);
 RcppExport SEXP LSHR_hash_signatures(SEXP mSEXP, SEXP bands_numberSEXP, SEXP rows_per_bandSEXP) {
@@ -39,6 +61,20 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< int >::type bands_number(bands_numberSEXP);
     Rcpp::traits::input_parameter< int >::type rows_per_band(rows_per_bandSEXP);
     rcpp_result_gen = Rcpp::wrap(hash_signatures(m, bands_number, rows_per_band));
+    return rcpp_result_gen;
+END_RCPP
+}
+// project_spmat
+IntegerVector project_spmat(const S4& m, int n, int seed, int n_threads);
+RcppExport SEXP LSHR_project_spmat(SEXP mSEXP, SEXP nSEXP, SEXP seedSEXP, SEXP n_threadsSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const S4& >::type m(mSEXP);
+    Rcpp::traits::input_parameter< int >::type n(nSEXP);
+    Rcpp::traits::input_parameter< int >::type seed(seedSEXP);
+    Rcpp::traits::input_parameter< int >::type n_threads(n_threadsSEXP);
+    rcpp_result_gen = Rcpp::wrap(project_spmat(m, n, seed, n_threads));
     return rcpp_result_gen;
 END_RCPP
 }

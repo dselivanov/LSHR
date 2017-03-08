@@ -15,7 +15,7 @@ uint32_t atom_hashfun_2( uint32_t a) {
   a = a ^ (a >> 15);
   return a;
 }
-//' @export
+
 // [[Rcpp::export]]
 Rcpp::IntegerVector hashfun_1(IntegerVector vec) {
   int K = vec.size();
@@ -25,6 +25,7 @@ Rcpp::IntegerVector hashfun_1(IntegerVector vec) {
   return res;
 }
 
+// [[Rcpp::export]]
 Rcpp::IntegerVector hashfun_2(IntegerVector vec) {
   int K = vec.size();
   Rcpp::IntegerVector res(K);
@@ -52,3 +53,19 @@ IntegerVector get_minhash_matrix(uint32_t unique_shingles_length, uint32_t hashf
   return res_matrix;
 }
 
+
+inline int sign01(double x) {
+  if(x > 0) return 1;
+  if(x < 0) return 0;
+  return R::runif(-1, 1) >= 0;
+}
+// [[Rcpp::export]]
+IntegerMatrix sign_bit(NumericMatrix x) {
+  int nr = x.nrow();
+  int nc = x.ncol();
+  IntegerMatrix res(nr, nc);
+  for(int i = 0; i < nr; i++)
+    for(int j = 0; j < nc; j++)
+      res(i, j) = sign01(x(i, j));
+  return res;
+}

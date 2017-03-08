@@ -17,6 +17,7 @@ library(LSHR)
 data("movie_review")
 it <- itoken(movie_review$review, preprocess_function = tolower, tokenizer = word_tokenizer)
 dtm <- create_dtm(it, hash_vectorizer())
+dtm = as(dtm, "RsparseMatrix")
 
 hashfun_number = 120
 s_curve <- get_s_curve(hashfun_number, n_bands_min = 5, n_rows_per_band_min = 5)
@@ -25,17 +26,20 @@ s_curve <- get_s_curve(hashfun_number, n_bands_min = 5, n_rows_per_band_min = 5)
 ```
 ![S-curves](https://cloud.githubusercontent.com/assets/5123805/13917531/82d5162a-ef72-11e5-8f5a-59a8d1f1f729.png)
 ```R
-options( mc.cores = 4)
-sign_mat <- get_signature_matrix(dtm, hashfun_number, 'jaccard', seed = 12L)
+seed = 1
+pairs = get_similar_pairs(dtm, bands_number = 10, rows_per_band = 32, distance = 'cosine', seed = seed)
 
-candidate_indices <- get_similar_pairs(signature_matrix = sign_mat,
-                                       bands_number = 5,
-                                       verbose = T)
-candidate_indices                                       
-#    id1  id2
-#1: 1291 1356
-#2: 1615 3846
-#3: 1054 1417
-#4: 1084 3462
-#5: 2805 4763
+# pairs                                       
+#        id1  id2  N
+#    1: 1054 1417 10
+#    2: 1084 3462 10
+#    3: 1291 1356 10
+#    4: 1615 3846 10
+#    5: 2221 4535  3
+#   ---             
+# 2686: 4785 4796  1
+# 2687: 4785 4986  1
+# 2688: 4796 4986  1
+# 2689: 4835 4877  1
+# 2690: 4848 4899  1
 ```
