@@ -22,7 +22,7 @@ hash_signatures <- function(m, bands_number, rows_per_band) {
     .Call('LSHR_hash_signatures', PACKAGE = 'LSHR', m, bands_number, rows_per_band)
 }
 
-project_spmat <- function(m, n, seed = 1L, n_threads = 0L) {
-    .Call('LSHR_project_spmat', PACKAGE = 'LSHR', m, n, seed, n_threads)
+project_spmat <- function(m, n, hash_fun_id_offest, n_threads = 0L) {
+    .Call('LSHR_project_spmat', PACKAGE = 'LSHR', m, n, hash_fun_id_offest, n_threads)
 }
 

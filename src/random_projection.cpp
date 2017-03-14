@@ -11,7 +11,7 @@ int omp_thread_count() {
 }
 
 // [[Rcpp::export]]
-IntegerVector project_spmat(const S4 &m, int n, int seed = 1, int n_threads = 0) {
+IntegerVector project_spmat(const S4 &m, int n, int hash_fun_id_offest, int n_threads = 0) {
   int num_threads = n_threads;
   if(num_threads == 0) num_threads = omp_thread_count();
   IntegerVector dims = m.slot("Dim");
@@ -44,16 +44,14 @@ IntegerVector project_spmat(const S4 &m, int n, int seed = 1, int n_threads = 0)
       #ifdef _OPENMP
       #pragma omp simd
       #endif
-      for(int hh = 0; hh < n; hh++) {
-        int hh2 = hh + seed;
-        int h = h1 + (hh2 + 1) * h2 + hh2 * hh2;
-        row[hh] += (h * x);
+      for(uint hh = 0; hh < n; hh++) {
+        int hh2 = hh + hash_fun_id_offest;
+        uint32_t h = atom_hashfun_1((h1 + (hh2 + 1) * h2 + hh2 * hh2));
+        row[hh] += ((int)h * x);
       }
     }
     bitset<32> bitrow;
     for(int hh = 0; hh < n; hh++) {
-      // if(row[hh] == 0)
-      //   row[hh] = R::runif(-1, 1) > 0;
       if(row[hh] < 0)
         bitrow[hh] = 0;
       else

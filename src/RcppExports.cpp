@@ -65,16 +65,16 @@ BEGIN_RCPP
 END_RCPP
 }
 // project_spmat
-IntegerVector project_spmat(const S4& m, int n, int seed, int n_threads);
-RcppExport SEXP LSHR_project_spmat(SEXP mSEXP, SEXP nSEXP, SEXP seedSEXP, SEXP n_threadsSEXP) {
+IntegerVector project_spmat(const S4& m, int n, int hash_fun_id_offest, int n_threads);
+RcppExport SEXP LSHR_project_spmat(SEXP mSEXP, SEXP nSEXP, SEXP hash_fun_id_offestSEXP, SEXP n_threadsSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< const S4& >::type m(mSEXP);
     Rcpp::traits::input_parameter< int >::type n(nSEXP);
-    Rcpp::traits::input_parameter< int >::type seed(seedSEXP);
+    Rcpp::traits::input_parameter< int >::type hash_fun_id_offest(hash_fun_id_offestSEXP);
     Rcpp::traits::input_parameter< int >::type n_threads(n_threadsSEXP);
-    rcpp_result_gen = Rcpp::wrap(project_spmat(m, n, seed, n_threads));
+    rcpp_result_gen = Rcpp::wrap(project_spmat(m, n, hash_fun_id_offest, n_threads));
     return rcpp_result_gen;
 END_RCPP
 }
