@@ -3,6 +3,7 @@
 export(get_minhash_matrix)
 export(get_s_curve)
 export(get_similar_pairs)
+export(get_similar_pairs_cosine)
 import(Matrix)
 import(data.table)
 import(magrittr)

@@ -1,5 +1,7 @@
+#' @export
 get_similar_pairs_cosine <- function(X, bands_number, rows_per_band, seed = 1L, verbose = FALSE,
                                      mc.cores = 1, n_band_join = bands_number, ...) {
+  lsh_start = Sys.time()
   PACK_BITS = 32L
   stopifnot(rows_per_band <= 32L)
 
@@ -50,14 +52,14 @@ get_similar_pairs_cosine <- function(X, bands_number, rows_per_band, seed = 1L, 
       dt = data.frame(hash_val = x, id1 = seq_len(N))
       setDT(dt)
       dt[, id2 := id1]
-      # join with itself to receive candidates pairs
+      # join with itself to generate all candidates pairs
       dt = dt[dt, on = .(hash_val = hash_val, id1 > id2), nomatch = 0, allow.cartesian = T]
       pair_self_join_time = difftime(Sys.time(), start, units = 'secs')
-      # caclulate how many times each pair became candidate
+      # caclulate how many times each pair became candidate - local reduce
       start = Sys.time()
       dt = dt[, .N, keyby = .(id1, id2)]
       pair_reduce_time = difftime(Sys.time(), start, units = 'secs')
-      if (verbose) message( sprintf( "%s band %02d sketch_time %.3f; self_join: %.3f sec; pair_reduce: %.3f sec",
+      if (verbose) message( sprintf( "%s band %02d sketch_time %.3f; self_join: %.3f sec; local_reduce: %.3f sec",
                                      Sys.time(), i, sketch_time, pair_self_join_time, pair_reduce_time ) )
       #------------------------------------------------------
       dt
@@ -68,7 +70,10 @@ get_similar_pairs_cosine <- function(X, bands_number, rows_per_band, seed = 1L, 
     result = rbindlist(list(result, sketches));
     rm(sketches);gc()
     result = result[, .(N = sum(N)), keyby = .(id1, id2)];gc()
-    if (verbose) message( sprintf( "REDUCE at band # %d: %.3f sec", tail(bi, 1), difftime(Sys.time(), start, units = 'secs') ) )
+    if (verbose) message( sprintf( "%s GLOBAL REDUCE after band # %d: %.3f sec",
+                                   Sys.time(), tail(bi, 1),
+                                   difftime(Sys.time(), start, units = 'secs')))
   }
+  if (verbose) message( sprintf( "%s TOTAL TIME SPENT %.3f sec", Sys.time(), difftime(Sys.time(), lsh_start, units = 'secs')))
   result
 }
