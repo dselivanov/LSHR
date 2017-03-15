@@ -1,3 +1,14 @@
+#' @rdname get_similar_pairs
+#' @param mc.cores number of cores to use for bands processing - random projection and candidate selection
+#' (this is embrassingly parallel task - can be done independently for each band).
+#' Most epensive operations - random projection. It is itself parallelized with OpenMP, so when \code{mc.cores > 1}
+#' random projection becomes single threaded. \bold{usually we recommend use \code{mc.cores = 1}} and rely on internal
+#' OpenMP parallelism. Candidate selection which not trivially parallelizable is not usually a bottleneck.
+#' @param n_band_join calculate in how many bands signatures became same. Since each bucket is independant obvious way is
+#' to calculate this stastics at the end (by default), so we will do it only once. On the other side we can calculate it
+#' each \code{n_band_join} so we can save some memory (if this becomes a issue).
+#' \bold{in most cases we recommend to use default value for this parameter}.
+#' @param ... other parameters to \code{mclapply} (used if \code{mc.cores > 1} )
 #' @export
 get_similar_pairs_cosine <- function(X, bands_number, rows_per_band, seed = 1L, verbose = FALSE,
                                      mc.cores = 1, n_band_join = bands_number, ...) {
@@ -17,7 +28,6 @@ get_similar_pairs_cosine <- function(X, bands_number, rows_per_band, seed = 1L, 
   pad_bits_matrix = NULL
   if(rows_per_band < PACK_BITS)
     pad_bits_matrix = matrix(0L, ncol = PACK_BITS - rows_per_band, nrow = N)
-  # hashfun_number = bands_number * rows_per_band
   # allocate memory for result
   n_chunks = ceiling(bands_number / n_band_join)
   result = NULL
@@ -25,7 +35,6 @@ get_similar_pairs_cosine <- function(X, bands_number, rows_per_band, seed = 1L, 
   suppressWarnings({batch_indices = split(1:bands_number, rep(seq_len(n_chunks), each = n_band_join))})
   for(bi in batch_indices) {
 
-    # sketches = parallel::mclapply(seq_len(bands_number), function(i) {
     sketches = parallel::mclapply(bi, function(i) {
       start = Sys.time()
 
@@ -39,7 +48,7 @@ get_similar_pairs_cosine <- function(X, bands_number, rows_per_band, seed = 1L, 
         } else
         {
           # FIXME - will be faster to generate projections "on the fly" instead of generating `sample` and then multilply
-          hm = matrix(runif(ncol(X) * rows_per_band, -2**16, 2**16), nrow = rows_per_band)
+          hm = matrix(stats::runif(ncol(X) * rows_per_band, -2**16, 2**16), nrow = rows_per_band)
           x = tcrossprod(X, hm)
           if(class(x) != 'matrix') x = as.matrix(x)
           x = sign_bit(x)
@@ -53,7 +62,7 @@ get_similar_pairs_cosine <- function(X, bands_number, rows_per_band, seed = 1L, 
       setDT(dt)
       dt[, id2 := id1]
       # join with itself to generate all candidates pairs
-      dt = dt[dt, on = .(hash_val = hash_val, id1 > id2), nomatch = 0, allow.cartesian = T]
+      dt = dt[dt, on = list(hash_val = hash_val, id1 > id2), nomatch = 0, allow.cartesian = T]
       pair_self_join_time = difftime(Sys.time(), start, units = 'secs')
       # caclulate how many times each pair became candidate - local reduce
       start = Sys.time()

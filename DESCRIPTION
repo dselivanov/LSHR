@@ -1,23 +1,23 @@
 Package: LSHR
 Type: Package
-Title: Locality Sensitive Hashing In R
+Title: Locality Sensitive Hashing in R
 Version: 0.2.0
 Date: 2017-03-08
 Authors@R: person("Dmitriy", "Selivanov", role = c("aut", "cre"),
     email = "selivanov.dmitriy@gmail.com")
 Maintainer: Dmitriy Selivanov <selivanov.dmitriy@gmail.com>
 Description: Fast and memory efficient duplicate-detection and near-neighbor
-    search in high-dimensional data. 
-    Only Cosine and Jaccard distances supported at the moment
+    search in high-dimensional data. Only Cosine and Jaccard distances supported at the moment.
 License: MIT + file LICENSE
 URL: https://github.com/dselivanov/LSHR
 BugReports: https://github.com/dselivanov/LSHR/issues
 VignetteBuilder: knitr
 SystemRequirements: C++11
 Depends:
-    Matrix
+    Matrix,
+    methods
 Imports:
-    data.table(>= 1.9.4),
+    data.table(>= 1.9.10),
     magrittr (>= 1.5),
     Rcpp (>= 0.10.3),
     matrixStats,

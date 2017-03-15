@@ -1,4 +1,3 @@
-
 get_similar_pairs_jaccard = function(X, bands_number, rows_per_band, seed = 1L, verbose = TRUE) {
 
   hash_matrix = get_minhash_matrix(unique_shingles_length = ncol(X),
@@ -39,7 +38,7 @@ minhashing <- function(dtm, hash_matrix, ...) {
   if (!inherits(dtm, 'dgCMatrix'))
     dtm <- as(dtm, 'dgCMatrix')
 
-  dtm <- LSHR:::to_lil( t(dtm) )
+  dtm <- to_lil( t(dtm) )
 
   minhash_signatures <-
     parallel::mcmapply(

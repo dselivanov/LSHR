@@ -34,7 +34,6 @@ Rcpp::IntegerVector hashfun_2(IntegerVector vec) {
   return res;
 }
 
-//' @export
 // [[Rcpp::export]]
 IntegerVector get_minhash_matrix(uint32_t unique_shingles_length, uint32_t hashfun_number, uint32_t seed) {
   IntegerMatrix res_matrix( hashfun_number, unique_shingles_length);
@@ -47,7 +46,7 @@ IntegerVector get_minhash_matrix(uint32_t unique_shingles_length, uint32_t hashf
     // http://stackoverflow.com/questions/24676237/generating-random-hash-functions-for-lsh-minhash-algorithm
     // http://www.eecs.harvard.edu/~kirsch/pubs/bbbf/rsa.pdf
     for (uint32_t j = 0; j < hashfun_number; j++) {
-      res_matrix(j, i) = h1 + (j + 1) * h2 + j * j;
+      res_matrix(j, i) = atom_hashfun_1(h1 + h2 + j);
     }
   }
   return res_matrix;

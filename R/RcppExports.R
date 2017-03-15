@@ -9,7 +9,6 @@ hashfun_2 <- function(vec) {
     .Call('LSHR_hashfun_2', PACKAGE = 'LSHR', vec)
 }
 
-#' @export
 get_minhash_matrix <- function(unique_shingles_length, hashfun_number, seed) {
     .Call('LSHR_get_minhash_matrix', PACKAGE = 'LSHR', unique_shingles_length, hashfun_number, seed)
 }
