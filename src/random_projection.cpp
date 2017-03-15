@@ -1,6 +1,23 @@
 #include "LSHR.h"
 using namespace Rcpp;
 
+// http://stackoverflow.com/a/12996028/1069256
+inline uint32_t hash_1(uint32_t a) {
+  a = ((a >> 16) ^ a) * 0x45d9f3b;
+  a = ((a >> 16) ^ a) * 0x45d9f3b;
+  a = ((a >> 16) ^ a);
+  return a;
+}
+// http://burtleburtle.net/bob/hash/integer.html
+inline uint32_t hash_2( uint32_t a) {
+  a = (a ^ 61) ^ (a >> 16);
+  a = a + (a << 3);
+  a = a ^ (a >> 4);
+  a = a * 0x27d4eb2d;
+  a = a ^ (a >> 15);
+  return a;
+}
+
 int omp_thread_count() {
   int n = 0;
   #ifdef _OPENMP
@@ -39,14 +56,14 @@ IntegerVector project_spmat(const S4 &m, int n, int hash_fun_id_offest, int n_th
     for(int k = p1; k < p2; k++) {
       int j = J[k];
       double x = X[k];
-      h1 = atom_hashfun_1(j);
-      h2 = atom_hashfun_2(j);
+      h1 = hash_1(j);
+      h2 = hash_2(j);
       #ifdef _OPENMP
       #pragma omp simd
       #endif
       for(uint hh = 0; hh < n; hh++) {
         int hh2 = hh + hash_fun_id_offest;
-        uint32_t h = atom_hashfun_1((h1 + (hh2 + 1) * h2 + hh2 * hh2));
+        uint32_t h = hash_1(h1 + h2 + hh2);
         row[hh] += ((int)h * x);
       }
     }
