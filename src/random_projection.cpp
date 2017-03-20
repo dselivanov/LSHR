@@ -1,4 +1,5 @@
 #include "LSHR.h"
+#include <bitset>
 using namespace Rcpp;
 
 // http://stackoverflow.com/a/12996028/1069256
@@ -67,7 +68,7 @@ IntegerVector project_spmat(const S4 &m, int n, int hash_fun_id_offest, int n_th
         row[hh] += ((int)h * x);
       }
     }
-    bitset<32> bitrow;
+    std::bitset<32> bitrow;
     for(int hh = 0; hh < n; hh++) {
       if(row[hh] < 0)
         bitrow[hh] = 0;
