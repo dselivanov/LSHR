@@ -64,18 +64,15 @@ get_similar_pairs_cosine <- function(X, bands_number, rows_per_band, seed = 1L, 
       # join with itself to generate all candidates pairs
       dt = dt[dt, on = list(hash_val = hash_val, id1 > id2), nomatch = 0, allow.cartesian = T]
       pair_self_join_time = difftime(Sys.time(), start, units = 'secs')
-      # caclulate how many times each pair became candidate - local reduce
-      start = Sys.time()
-      dt = dt[, .N, keyby = .(id1, id2)]
-      pair_reduce_time = difftime(Sys.time(), start, units = 'secs')
-      if (verbose) message( sprintf( "%s band %02d sketch_time %.3f; self_join: %.3f sec; local_reduce: %.3f sec",
-                                     Sys.time(), i, sketch_time, pair_self_join_time, pair_reduce_time ) )
+      if (verbose) message( sprintf( "%s band %02d sketch_time %.3f; self_join: %.3f sec",
+                                     Sys.time(), i, sketch_time, pair_self_join_time) )
+
       #------------------------------------------------------
       dt
     }, mc.cores = mc.cores, ...)
     start = Sys.time()
     sketches = rbindlist(sketches);gc()
-    sketches = sketches[, .(N = sum(N)), keyby = .(id1, id2)];gc()
+    sketches = sketches[, .N, keyby = .(id1, id2)]; gc()
     result = rbindlist(list(result, sketches));
     rm(sketches);gc()
     result = result[, .(N = sum(N)), keyby = .(id1, id2)];gc()

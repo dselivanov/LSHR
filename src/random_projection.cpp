@@ -53,18 +53,17 @@ IntegerVector project_spmat(const S4 &m, int n, int hash_fun_id_offest, int n_th
     int p1 = P[i];
     int p2 = P[i + 1];
     vector<float> row(32);
-
+    float x;
     for(int k = p1; k < p2; k++) {
       int j = J[k];
-      double x = X[k];
+      x = (float)X[k];
       h1 = hash_1(j);
       h2 = hash_2(j);
       #ifdef _OPENMP
       #pragma omp simd
       #endif
       for(uint hh = 0; hh < n; hh++) {
-        int hh2 = hh + hash_fun_id_offest;
-        uint32_t h = hash_1(h1 + h2 + hh2);
+        uint32_t h = hash_1(h1 + h2 + hh + hash_fun_id_offest);
         row[hh] += ((int)h * x);
       }
     }
