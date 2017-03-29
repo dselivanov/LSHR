@@ -20,6 +20,7 @@ Imports:
     data.table(>= 1.9.10),
     magrittr (>= 1.5),
     Rcpp (>= 0.10.3),
+    futile.logger (>= 1.4.3),
     matrixStats,
     parallel,
     ggplot2

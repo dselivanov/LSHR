@@ -18,7 +18,7 @@ get_similar_pairs_cosine <- function(X, bands_number, rows_per_band, seed = 1L, 
 
   if(inherits(X, "sparseMatrix"))
     if(!inherits(X, "dgRMatrix")) {
-      message(sprintf("converting input sparse matrix to dgRMatrix"))
+      flog.info("converting input sparse matrix to dgRMatrix")
       X = as(X, "RsparseMatrix")
     }
 
@@ -64,9 +64,7 @@ get_similar_pairs_cosine <- function(X, bands_number, rows_per_band, seed = 1L, 
       # join with itself to generate all candidates pairs
       dt = dt[dt, on = list(hash_val = hash_val, id1 > id2), nomatch = 0, allow.cartesian = T]
       pair_self_join_time = difftime(Sys.time(), start, units = 'secs')
-      if (verbose) message( sprintf( "%s band %02d sketch_time %.3f; self_join: %.3f sec",
-                                     Sys.time(), i, sketch_time, pair_self_join_time) )
-
+      flog.info("band %02d sketch_time %.3f; self_join: %.3f sec", i, sketch_time, pair_self_join_time)
       #------------------------------------------------------
       dt
     }, mc.cores = mc.cores, ...)
@@ -76,10 +74,9 @@ get_similar_pairs_cosine <- function(X, bands_number, rows_per_band, seed = 1L, 
     result = rbindlist(list(result, sketches));
     rm(sketches);gc()
     result = result[, .(N = sum(N)), keyby = .(id1, id2)];gc()
-    if (verbose) message( sprintf( "%s GLOBAL REDUCE after band # %d: %.3f sec",
-                                   Sys.time(), tail(bi, 1),
-                                   difftime(Sys.time(), start, units = 'secs')))
+    flog.info("aggregate after band # %d: %.3f sec %d candidates so far", tail(bi, 1),
+              difftime(Sys.time(), start, units = 'secs'), nrow(result))
   }
-  if (verbose) message( sprintf( "%s TOTAL TIME SPENT %.3f sec", Sys.time(), difftime(Sys.time(), lsh_start, units = 'secs')))
+  flog.info( "TOTAL TIME SPENT %.3f sec", difftime(Sys.time(), lsh_start, units = 'secs'))
   result
 }
