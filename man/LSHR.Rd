@@ -8,4 +8,3 @@
 \description{
 LSHR: Locality Sensitive haching in R
 }
-

@@ -62,7 +62,7 @@ IntegerVector project_spmat(const S4 &m, int n, int hash_fun_id_offest, int n_th
       #ifdef _OPENMP
       #pragma omp simd
       #endif
-      for(uint hh = 0; hh < n; hh++) {
+      for(int hh = 0; hh < n; hh++) {
         uint32_t h = hash_1(h1 + h2 + hh + hash_fun_id_offest);
         row[hh] += ((int)h * x);
       }

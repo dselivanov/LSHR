@@ -66,4 +66,3 @@ distance = 'cosine', verbose = TRUE)
 pairs[order(-N)]
 }
 }
-

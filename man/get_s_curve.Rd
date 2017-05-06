@@ -20,4 +20,3 @@ get_s_curve(number_hashfun, n_bands_min = 1, n_rows_per_band_min = 1,
 Calculates "S-curve". This is used to pick number of hash functions and bands which
 provides tradeoff between precision and recall for approximate near neighbor search.
 }
-
