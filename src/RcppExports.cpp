@@ -7,7 +7,7 @@ using namespace Rcpp;
 
 // hashfun_1
 Rcpp::IntegerVector hashfun_1(IntegerVector vec);
-RcppExport SEXP LSHR_hashfun_1(SEXP vecSEXP) {
+RcppExport SEXP _LSHR_hashfun_1(SEXP vecSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -18,7 +18,7 @@ END_RCPP
 }
 // hashfun_2
 Rcpp::IntegerVector hashfun_2(IntegerVector vec);
-RcppExport SEXP LSHR_hashfun_2(SEXP vecSEXP) {
+RcppExport SEXP _LSHR_hashfun_2(SEXP vecSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -29,7 +29,7 @@ END_RCPP
 }
 // get_minhash_matrix
 IntegerVector get_minhash_matrix(uint32_t unique_shingles_length, uint32_t hashfun_number, uint32_t seed);
-RcppExport SEXP LSHR_get_minhash_matrix(SEXP unique_shingles_lengthSEXP, SEXP hashfun_numberSEXP, SEXP seedSEXP) {
+RcppExport SEXP _LSHR_get_minhash_matrix(SEXP unique_shingles_lengthSEXP, SEXP hashfun_numberSEXP, SEXP seedSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -42,7 +42,7 @@ END_RCPP
 }
 // sign_bit
 IntegerMatrix sign_bit(NumericMatrix x);
-RcppExport SEXP LSHR_sign_bit(SEXP xSEXP) {
+RcppExport SEXP _LSHR_sign_bit(SEXP xSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -53,7 +53,7 @@ END_RCPP
 }
 // hash_signatures
 IntegerMatrix hash_signatures(IntegerMatrix m, int bands_number, int rows_per_band);
-RcppExport SEXP LSHR_hash_signatures(SEXP mSEXP, SEXP bands_numberSEXP, SEXP rows_per_bandSEXP) {
+RcppExport SEXP _LSHR_hash_signatures(SEXP mSEXP, SEXP bands_numberSEXP, SEXP rows_per_bandSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -65,8 +65,8 @@ BEGIN_RCPP
 END_RCPP
 }
 // project_spmat
-IntegerVector project_spmat(const S4& m, int n, int hash_fun_id_offest, int n_threads);
-RcppExport SEXP LSHR_project_spmat(SEXP mSEXP, SEXP nSEXP, SEXP hash_fun_id_offestSEXP, SEXP n_threadsSEXP) {
+SEXP project_spmat(const S4& m, int n, int hash_fun_id_offest, int n_threads);
+RcppExport SEXP _LSHR_project_spmat(SEXP mSEXP, SEXP nSEXP, SEXP hash_fun_id_offestSEXP, SEXP n_threadsSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -77,4 +77,19 @@ BEGIN_RCPP
     rcpp_result_gen = Rcpp::wrap(project_spmat(m, n, hash_fun_id_offest, n_threads));
     return rcpp_result_gen;
 END_RCPP
+}
+
+static const R_CallMethodDef CallEntries[] = {
+    {"_LSHR_hashfun_1", (DL_FUNC) &_LSHR_hashfun_1, 1},
+    {"_LSHR_hashfun_2", (DL_FUNC) &_LSHR_hashfun_2, 1},
+    {"_LSHR_get_minhash_matrix", (DL_FUNC) &_LSHR_get_minhash_matrix, 3},
+    {"_LSHR_sign_bit", (DL_FUNC) &_LSHR_sign_bit, 1},
+    {"_LSHR_hash_signatures", (DL_FUNC) &_LSHR_hash_signatures, 3},
+    {"_LSHR_project_spmat", (DL_FUNC) &_LSHR_project_spmat, 4},
+    {NULL, NULL, 0}
+};
+
+RcppExport void R_init_LSHR(DllInfo *dll) {
+    R_registerRoutines(dll, NULL, CallEntries, NULL, NULL);
+    R_useDynamicSymbols(dll, FALSE);
 }

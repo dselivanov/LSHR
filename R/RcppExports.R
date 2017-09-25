@@ -2,26 +2,26 @@
 # Generator token: 10BE3573-1514-4C36-9D1C-5A225CD40393
 
 hashfun_1 <- function(vec) {
-    .Call('LSHR_hashfun_1', PACKAGE = 'LSHR', vec)
+    .Call('_LSHR_hashfun_1', PACKAGE = 'LSHR', vec)
 }
 
 hashfun_2 <- function(vec) {
-    .Call('LSHR_hashfun_2', PACKAGE = 'LSHR', vec)
+    .Call('_LSHR_hashfun_2', PACKAGE = 'LSHR', vec)
 }
 
 get_minhash_matrix <- function(unique_shingles_length, hashfun_number, seed) {
-    .Call('LSHR_get_minhash_matrix', PACKAGE = 'LSHR', unique_shingles_length, hashfun_number, seed)
+    .Call('_LSHR_get_minhash_matrix', PACKAGE = 'LSHR', unique_shingles_length, hashfun_number, seed)
 }
 
 sign_bit <- function(x) {
-    .Call('LSHR_sign_bit', PACKAGE = 'LSHR', x)
+    .Call('_LSHR_sign_bit', PACKAGE = 'LSHR', x)
 }
 
 hash_signatures <- function(m, bands_number, rows_per_band) {
-    .Call('LSHR_hash_signatures', PACKAGE = 'LSHR', m, bands_number, rows_per_band)
+    .Call('_LSHR_hash_signatures', PACKAGE = 'LSHR', m, bands_number, rows_per_band)
 }
 
 project_spmat <- function(m, n, hash_fun_id_offest, n_threads = 0L) {
-    .Call('LSHR_project_spmat', PACKAGE = 'LSHR', m, n, hash_fun_id_offest, n_threads)
+    .Call('_LSHR_project_spmat', PACKAGE = 'LSHR', m, n, hash_fun_id_offest, n_threads)
 }
 

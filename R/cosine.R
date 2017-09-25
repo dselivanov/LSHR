@@ -13,8 +13,8 @@
 get_similar_pairs_cosine <- function(X, bands_number, rows_per_band, seed = 1L, verbose = FALSE,
                                      mc.cores = 1, n_band_join = bands_number, ...) {
   lsh_start = Sys.time()
-  PACK_BITS = 32L
-  stopifnot(rows_per_band <= 32L)
+  PACK_BITS = 64L
+  stopifnot(rows_per_band <= PACK_BITS)
 
   if(inherits(X, "sparseMatrix"))
     if(!inherits(X, "dgRMatrix")) {

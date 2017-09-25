@@ -7,6 +7,7 @@
 #' @import magrittr
 #' @import methods
 #' @import Matrix
+#' @importFrom bit64 integer64
 #' @import futile.logger
 #' @importFrom Rcpp evalCpp
 #' @importFrom ggplot2 ggplot geom_line aes scale_color_discrete

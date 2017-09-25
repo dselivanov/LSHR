@@ -14,9 +14,10 @@ BugReports: https://github.com/dselivanov/LSHR/issues
 VignetteBuilder: knitr
 SystemRequirements: C++11
 Depends:
-    Matrix,
     methods
 Imports:
+    Matrix,
+    bit64,
     data.table(>= 1.9.10),
     magrittr (>= 1.5),
     Rcpp (>= 0.10.3),
