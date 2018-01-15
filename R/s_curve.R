@@ -28,17 +28,22 @@ get_s_curve <- function(number_hashfun,
                  n_bands = n_band,
                  n_rows_per_band = n_rows_per_band)
                  #setup = paste0("bands=", n_band, ";rows_per_band=", n_rows_per_band))
-    }, bands_number, rows_per_band, SIMPLIFY = F) %>%
-      rbindlist
+    }, bands_number, rows_per_band, SIMPLIFY = F)
 
+  s_curve = rbindlist(s_curve)
+  g = NULL
   if (plot) {
-    g <-
-      ggplot(s_curve) +
+    if(require(ggplot)) {
+      g =
+        ggplot(s_curve) +
         geom_line(aes(x = similarity,
                       y = probability_become_candidate,
                       col = interaction(n_bands, n_rows_per_band, sep = " : " ))) +
         scale_color_discrete("bands_number : rows_per_band")
-    print(g)
+      print(g)
+    } else {
+      warning("install ggplot2 in order to plot curves")
+    }
   }
   attr(s_curve, "ggplot") = g
   invisible(s_curve)

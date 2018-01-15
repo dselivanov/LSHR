@@ -18,13 +18,14 @@ Depends:
     methods
 Imports:
     data.table(>= 1.9.10),
-    magrittr (>= 1.5),
     Rcpp (>= 0.10.3),
     futile.logger (>= 1.4.3),
     matrixStats,
-    parallel,
+    parallel
+Suggests:
     ggplot2
-LinkingTo: Rcpp
+LinkingTo: 
+    Rcpp
 Suggests:
     roxygen2,
     knitr
