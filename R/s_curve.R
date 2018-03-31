@@ -33,7 +33,7 @@ get_s_curve <- function(number_hashfun,
   s_curve = rbindlist(s_curve)
   g = NULL
   if (plot) {
-    if(require(ggplot)) {
+    if(require(ggplot2)) {
       g =
         ggplot(s_curve) +
         geom_line(aes(x = similarity,
