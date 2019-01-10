@@ -22,11 +22,10 @@ Imports:
     futile.logger (>= 1.4.3),
     matrixStats,
     parallel
-Suggests:
-    ggplot2
 LinkingTo: 
     Rcpp
 Suggests:
+    ggplot2
     roxygen2,
     knitr
 RoxygenNote: 6.0.1
